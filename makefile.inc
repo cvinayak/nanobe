@@ -43,6 +43,9 @@ $(TARGETS) :
 	$(OBJCOPY) -O binary $@ $(basename $@).bin
 	$(SIZE) $@
 
+%.s : %.S
+	$(CC) $(CFLAGS) -E $< > $@
+
 %.d : %.s
 	@echo Dependencies for $<
 	$(AS) $(ASFLAGS) --MD $@ -o $(@:.d=.o) $<
