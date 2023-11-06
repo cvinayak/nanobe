@@ -123,6 +123,7 @@ else ifeq ($(SOC), nrf5340_cpuapp)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
@@ -160,6 +161,7 @@ else ifeq ($(SOC), nrf5340_cpunet)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
@@ -192,6 +194,7 @@ else ifeq ($(SOC), nrf52840)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
@@ -229,6 +232,7 @@ else ifeq ($(SOC), nrf52832)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
@@ -267,6 +271,7 @@ else ifeq ($(SOC), nrf51822)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
@@ -309,6 +314,10 @@ SRCS_NANOBE = \
 
 SRCS_UTIL = \
 	util/util.c \
+	util/dbuf.c \
+	util/mem.c \
+	util/memq.c \
+	util/mayfly.c \
 
 ASMS_APP_METAL = \
 	$(ASMS_COMMON) \
@@ -344,6 +353,23 @@ ifeq ($(ARCH), arm)
   ASMS += $(ASMS_APP_PROFILE)
   SRCS += $(SRCS_APP_PROFILE)
   TARGETS += app/app_profile.elf
+
+  ASMS_APP_MAYFLY = \
+	$(ASMS_COMMON) \
+	$(ASMS_NANOBE) \
+	$(ASMS_SOC_NRF5) \
+
+  SRCS_APP_MAYFLY = \
+	$(SRCS_NANOBE) \
+	$(SRCS_SOC_NRF5) \
+	$(SRCS_HAL_NRF5) \
+	$(SRCS_UTIL) \
+	app/app_mayfly.c \
+
+  OBJS_APP_MAYFLY = $(ASMS_APP_MAYFLY:.s=.o) $(SRCS_APP_MAYFLY:.c=.o)
+  ASMS += $(ASMS_APP_MAYFLY)
+  SRCS += $(SRCS_APP_MAYFLY)
+  TARGETS += app/app_mayfly.elf
 endif
 
 all : $(TARGETS)
@@ -351,5 +377,7 @@ all : $(TARGETS)
 app/app_metal.elf : $(OBJS_APP_METAL)
 
 app/app_profile.elf : $(OBJS_APP_PROFILE)
+
+app/app_mayfly.elf : $(OBJS_APP_MAYFLY)
 
 include makefile.inc
