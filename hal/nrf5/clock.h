@@ -13,53 +13,18 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _MISC_H_
-#define _MISC_H_
+#ifndef _CLOCK_H_
+#define _CLOCK_H_
 
-#ifndef __packed
-#define __packed  __attribute__((packed))
+#if defined(NRF53_SERIES)
+#define NRF_CLOCK        NRF_CLOCK_NS
+#define NRF_POWER        NRF_POWER_NS
+#define POWER_CLOCK_IRQn CLOCK_POWER_IRQn
 #endif
 
-#ifndef __aligned
-#define __aligned(x) __attribute__((aligned(x)))
+uint32_t clock_m16src_start(uint32_t blocking);
+uint32_t clock_m16src_stop(void);
+uint32_t clock_k32src_start(uint32_t src);
+void isr_power_clock(void *param);
+
 #endif
-
-#ifndef __noinit
-#define __noinit __attribute__((section(".noinit")))
-#endif
-
-#ifndef ALIGNED
-#define ALIGNED(x) __aligned(x)
-#endif
-
-#ifndef ALIGN4
-#define ALIGN4(x) (((uint32_t)(x)+3) & (~((uint32_t)3)))
-#endif
-
-#ifndef BIT
-#define BIT(n) (1U << (n))
-#endif
-
-#ifndef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
-#ifndef MAX
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef ARG_UNUSED
-#define ARG_UNUSED(x) (void)(x)
-#endif
-
-#ifndef BUILD_ASSERT
-#define BUILD_ASSERT(EXPR, MSG...) _Static_assert(EXPR, "" MSG)
-#endif
-
-#define IS_ENABLED(config_macro) IS_ENABLED1(config_macro)
-#define IS_ENABLED1(config_macro) IS_ENABLED2(_XXXX##config_macro)
-#define _XXXX1 _YYYY,
-#define IS_ENABLED2(one_or_two_args) IS_ENABLED3(one_or_two_args 1, 0)
-#define IS_ENABLED3(ignore_this, val, ...) val
-
-#endif /* _MISC_H_ */

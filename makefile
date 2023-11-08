@@ -123,6 +123,9 @@ else ifeq ($(SOC), nrf5340_cpuapp)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
 		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
@@ -161,6 +164,9 @@ else ifeq ($(SOC), nrf5340_cpunet)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
 		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
@@ -194,6 +200,9 @@ else ifeq ($(SOC), nrf52840)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
 		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
@@ -232,6 +241,9 @@ else ifeq ($(SOC), nrf52832)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
 		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
@@ -271,6 +283,9 @@ else ifeq ($(SOC), nrf51822)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
 		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
 		hal/nrf5/timer.c \
@@ -318,6 +333,7 @@ SRCS_UTIL = \
 	util/mem.c \
 	util/memq.c \
 	util/mayfly.c \
+	ticker/ticker.c \
 
 ASMS_APP_METAL = \
 	$(ASMS_COMMON) \
@@ -370,14 +386,44 @@ ifeq ($(ARCH), arm)
   ASMS += $(ASMS_APP_MAYFLY)
   SRCS += $(SRCS_APP_MAYFLY)
   TARGETS += app/app_mayfly.elf
+
+  ASMS_APP_TICKER = \
+	$(ASMS_COMMON) \
+	$(ASMS_NANOBE) \
+	$(ASMS_SOC_NRF5) \
+
+  SRCS_APP_TICKER = \
+	$(SRCS_NANOBE) \
+	$(SRCS_SOC_NRF5) \
+	$(SRCS_HAL_NRF5) \
+	$(SRCS_UTIL) \
+	app/app_ticker.c \
+
+  CFLAGS_APP_TICKER = \
+	-DDEBUG=1 \
+	-DCONFIG_BT_TICKER_LOW_LAT \
+
+  OBJS_APP_TICKER = $(ASMS_APP_TICKER:.s=.o) $(SRCS_APP_TICKER:.c=.o)
+  ASMS += $(ASMS_APP_TICKER)
+  SRCS += $(SRCS_APP_TICKER)
+  TARGETS += app/app_ticker.elf
 endif
 
+
 all : $(TARGETS)
+
+all : CFLAGS += $(CFLAGS_APP_TICKER)
+
 
 app/app_metal.elf : $(OBJS_APP_METAL)
 
 app/app_profile.elf : $(OBJS_APP_PROFILE)
 
 app/app_mayfly.elf : $(OBJS_APP_MAYFLY)
+
+
+app/app_ticker.elf : CFLAGS += $(CFLAGS_APP_TICKER)
+
+app/app_ticker.elf : $(OBJS_APP_TICKER)
 
 include makefile.inc
