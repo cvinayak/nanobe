@@ -167,7 +167,186 @@ void soc_init(void)
 	 * disabled.
 	 */
 	NRF_CTRLAP_NS->APPROTECT.DISABLE = NRF_UICR_NS->APPROTECT;
-#endif /* NRF5340_XXAA_NETWORK */
+
+#elif defined(NRF54L15_ENGA_XXAA)
+	/* Set all GPIOs as output and pull down */
+	NRF_P0_S->DIRSET = UINT32_MAX;
+	NRF_P0_S->OUTCLR = UINT32_MAX;
+	NRF_P1_S->DIRSET = UINT32_MAX;
+	NRF_P1_S->OUTCLR = UINT32_MAX;
+	NRF_P2_S->DIRSET = UINT32_MAX;
+	NRF_P2_S->OUTCLR = UINT32_MAX;
+
+	/* Trimming of the device. Copy all the trimming values from FICR into
+	 * the target addresses. Trim until one ADDR is not initialized.
+	 */
+	uint32_t index = 0ul;
+	for (index = 0ul;
+	     index < 64ul &&
+	     (uint32_t)NRF_FICR_NS->TRIMCNF[index].ADDR != 0xFFFFFFFFul &&
+	     (uint32_t)NRF_FICR_NS->TRIMCNF[index].ADDR != 0x00000000ul;
+	     index++) {
+		*((volatile uint32_t *)NRF_FICR_NS->TRIMCNF[index].ADDR) =
+			NRF_FICR_NS->TRIMCNF[index].DATA;
+	}
+
+	/* LFXO internal capacitors */
+	#define CONFIG_SOC_LFXO_CAP_INT_VALUE_X2 31
+
+	uint32_t xosc32ktrim = NRF_FICR->XOSC32KTRIM;
+
+	uint32_t offset_k =
+		(xosc32ktrim & FICR_XOSC32KTRIM_OFFSET_Msk) >> FICR_XOSC32KTRIM_OFFSET_Pos;
+
+	uint32_t slope_field_k =
+		(xosc32ktrim & FICR_XOSC32KTRIM_SLOPE_Msk) >> FICR_XOSC32KTRIM_SLOPE_Pos;
+	uint32_t slope_mask_k = FICR_XOSC32KTRIM_SLOPE_Msk >> FICR_XOSC32KTRIM_SLOPE_Pos;
+	uint32_t slope_sign_k = (slope_mask_k - (slope_mask_k >> 1));
+	int32_t slope_k = (int32_t)(slope_field_k ^ slope_sign_k) - (int32_t)slope_sign_k;
+
+	/* As specified in the nRF54L15 PS:
+	 * CAPVALUE = round( (CAPACITANCE - 4) * (FICR->XOSC32KTRIM.SLOPE + 0.765625 * 2^9)/(2^9)
+	 *            + FICR->XOSC32KTRIM.OFFSET/(2^6) );
+	 * where CAPACITANCE is the desired capacitor value in pF, holding any
+	 * value between 4 pF and 18 pF in 0.5 pF steps.
+	 */
+	uint32_t mid_val = ((CONFIG_SOC_LFXO_CAP_INT_VALUE_X2 - 8UL) * (uint32_t)(slope_k + 392)) +
+			   (offset_k << 4UL);
+	uint32_t capvalue_k = mid_val >> 10UL;
+
+	/* Round. */
+	if ((mid_val % 1024UL) >= 512UL) {
+		capvalue_k++;
+	}
+
+	NRF_OSCILLATORS->XOSC32KI.INTCAP =
+		(capvalue_k << OSCILLATORS_XOSC32KI_INTCAP_VAL_Pos) &
+		OSCILLATORS_XOSC32KI_INTCAP_VAL_Msk;
+
+	/* HFXO internal capacitors */
+	#define CONFIG_SOC_HFXO_CAP_INT_VALUE_X4 60
+
+	uint32_t xosc32mtrim = NRF_FICR->XOSC32MTRIM;
+	/* The SLOPE field is in the two's complement form, hence this special
+	 * handling. Ideally, it would result in just one SBFX instruction for
+	 * extracting the slope value, at least gcc is capable of producing such
+	 * output, but since the compiler apparently tries first to optimize
+	 * additions and subtractions, it generates slightly less than optimal
+	 * code.
+	 */
+	uint32_t slope_field =
+		(xosc32mtrim & FICR_XOSC32MTRIM_SLOPE_Msk) >> FICR_XOSC32MTRIM_SLOPE_Pos;
+	uint32_t slope_mask = FICR_XOSC32MTRIM_SLOPE_Msk >> FICR_XOSC32MTRIM_SLOPE_Pos;
+	uint32_t slope_sign = (slope_mask - (slope_mask >> 1));
+	int32_t slope_m = (int32_t)(slope_field ^ slope_sign) - (int32_t)slope_sign;
+	uint32_t offset_m =
+		(xosc32mtrim & FICR_XOSC32MTRIM_OFFSET_Msk) >> FICR_XOSC32MTRIM_OFFSET_Pos;
+	/* As specified in the nRF54L15 PS:
+	 * CAPVALUE = (((CAPACITANCE-5.5)*(FICR->XOSC32MTRIM.SLOPE+791)) +
+	 *              FICR->XOSC32MTRIM.OFFSET<<2)>>8;
+	 * where CAPACITANCE is the desired total load capacitance value in pF,
+	 * holding any value between 4.0 pF and 17.0 pF in 0.25 pF steps.
+	 */
+	uint32_t capvalue =
+		(((CONFIG_SOC_HFXO_CAP_INT_VALUE_X4 - 22UL) * (uint32_t)(slope_m + 791) / 4UL) +
+		 (offset_m << 2UL)) >>
+		8UL;
+
+	NRF_OSCILLATORS->XOSC32M.CONFIG.INTCAP =
+		(capvalue << OSCILLATORS_XOSC32M_CONFIG_INTCAP_VAL_Pos) &
+		OSCILLATORS_XOSC32M_CONFIG_INTCAP_VAL_Msk;
+
+	/* Disable glitch detection (reduces CPU idle current consumption) */
+	NRF_GLITCHDET_S->CONFIG = 0;
+
+	/* Disable APPROTECT */
+	NRF_TAMPC->PROTECT.DOMAIN[0].DBGEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_WRITEPROTECTION_Clear <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_WRITEPROTECTION_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].DBGEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_High <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Disabled <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].NIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_WRITEPROTECTION_Clear <<
+		 TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_WRITEPROTECTION_Pos) |
+		(TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].NIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_VALUE_High <<
+		 TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_VALUE_Pos) |
+		(TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_LOCK_Disabled <<
+		 TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_NIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].SPIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_WRITEPROTECTION_Clear <<
+		 TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_WRITEPROTECTION_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].SPIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_VALUE_High <<
+		 TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_VALUE_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_LOCK_Disabled <<
+		 TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_SPIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].SPNIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_WRITEPROTECTION_Clear <<
+		 TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_WRITEPROTECTION_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.DOMAIN[0].SPNIDEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_VALUE_High <<
+		 TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_VALUE_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_LOCK_Disabled <<
+		 TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_SPNIDEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.AP[0].DBGEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_WRITEPROTECTION_Clear <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_WRITEPROTECTION_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_Pos);
+	NRF_TAMPC->PROTECT.AP[0].DBGEN.CTRL =
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_High <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_VALUE_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Disabled <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_LOCK_Pos) |
+		(TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_KEY <<
+		 TAMPC_PROTECT_DOMAIN_DBGEN_CTRL_KEY_Pos);
+
+	/* Disable tamper detection reset (needed to disable APPROTECT)*/
+	NRF_TAMPC_S->PROTECT.GLITCHSLOWDOMAIN.CTRL = 0;
+	NRF_TAMPC_S->PROTECT.GLITCHFASTDOMAIN.CTRL = 0;
+	NRF_TAMPC_S->PROTECT.EXTRESETEN.CTRL = 0;
+	NRF_TAMPC_S->PROTECT.INTRESETEN.CTRL = 0;
+
+#if 0
+	SCB->NSACR |= (3UL << 10ul);
+
+	SCB->CPACR |= (3UL << 20ul) | (3UL << 22ul);
+	__DSB();
+	__ISB();
+#endif
+
+	NRF_NFCT_S->PADCONFIG = (NFCT_PADCONFIG_ENABLE_Disabled <<
+				 NFCT_PADCONFIG_ENABLE_Pos) &
+				NFCT_PADCONFIG_ENABLE_Msk;
+
+	/* Enable DCDC */
+	if (NRF_REGULATORS_S->VREGMAIN.INDUCTORDET) {
+		NRF_REGULATORS_S->VREGMAIN.DCDCEN = 1U;
+	}
+
+	/* Running application at 128MHz clock frequency */
+	NRF_OSCILLATORS->PLL.FREQ = OSCILLATORS_PLL_FREQ_FREQ_CK128M;
+#endif /* NRF54L15_ENGA_XXAA */
 
 	/* SEVONPEND */
 	SCB->SCR |= SCB_SCR_SEVONPEND_Msk;
@@ -191,10 +370,14 @@ Assert handler
 #define ASSERT_STACK_FRAME (0x0101F000)
 #define NRF_NVMC NRF_NVMC_NS
 #define NRF_GPIO NRF_P0_NS
+#elif defined(NRF54L15_ENGA_XXAA)
+#define ASSERT_STACK_FRAME (0x0001F000)
+#define NRF_GPIO NRF_P0_S
 #endif
 
 void exc_hardfault(uint32_t sp)
 {
+#if !defined(NRF54L15_ENGA_XXAA)
 	uint32_t *p_flash = (uint32_t *) ASSERT_STACK_FRAME;
 	uint32_t count = 9; /* Cortex-M0 stack frame size = 8 32-bit words, 
 			     * plus SP itself to store.
@@ -219,6 +402,7 @@ void exc_hardfault(uint32_t sp)
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_PEen;
 	*p_flash = 0xFFFFFFFF;
 #endif
+
 	while (NRF_NVMC->READY == 0) {
 	}
 
@@ -236,6 +420,18 @@ void exc_hardfault(uint32_t sp)
 	}
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
 
+#else
+	ARG_UNUSED(sp);
+
+	/* turn LEDs on */
+	NRF_GPIO->DIRSET = 0xFFFFFFFF;
+	NRF_GPIO->OUTSET = 0xFFFFFFFF;
+
+	/* turn LEDs on */
+	NRF_P1_S->DIRSET = 0xFFFFFFFF;
+	NRF_P1_S->OUTSET = 0xFFFFFFFF;
+#endif
+
 	/* low power hang! */
 	while(1)
 	{
@@ -246,6 +442,7 @@ void exc_hardfault(uint32_t sp)
 #if UART
 void assert_print(void)
 {
+#if !defined(NRF54L15_ENGA_XXAA)
 	uint32_t sp = ASSERT_STACK_FRAME;
 	char buf[0xFF];
 	char *p_buf = buf;
@@ -269,5 +466,6 @@ void assert_print(void)
 	while (*p_buf) {
 		uart_tx(*p_buf++);
 	}
+#endif
 }
 #endif

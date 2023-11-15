@@ -22,8 +22,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #if !defined(NRF_TIMER2)
 #if defined(NRF_TIMER2_S)
 #define NRF_TIMER2 NRF_TIMER2_S
-#else
+#elif defined(NRF_TIMER2_NS)
 #define NRF_TIMER2 NRF_TIMER2_NS
+#elif defined(NRF_TIMER20_S)
+#define NRF_TIMER2 NRF_TIMER20_S
+#define TIMER2_IRQn TIMER20_IRQn
+#elif defined(NRF_TIMER20_NS)
+#define NRF_TIMER2 NRF_TIMER20_NS
+#define TIMER2_IRQn TIMER20_IRQn
+#else
+#error Unknown time instance.
 #endif
 #endif
 

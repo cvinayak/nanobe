@@ -17,5 +17,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define _SOC_H_
 
 #include "nrf.h"
+#include "nrf_peripherals.h"
 
 #endif /* _SOC_H_ */
