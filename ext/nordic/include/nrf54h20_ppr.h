@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA All rights reserved.
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -74,11 +74,7 @@ typedef enum {
   GRTC_2_IRQn                            = 110,      /*!< 110 GRTC_2                                                           */
   TBM_IRQn                               = 127,      /*!< 127 TBM                                                              */
   USBHS_IRQn                             = 134,      /*!< 134 USBHS                                                            */
-  MRAMC110_IRQn                          = 146,      /*!< 146 MRAMC110                                                         */
-  MRAMC111_IRQn                          = 147,      /*!< 147 MRAMC111                                                         */
   EXMIF_IRQn                             = 149,      /*!< 149 EXMIF                                                            */
-  OTPC_IRQn                              = 197,      /*!< 197 OTPC                                                             */
-  VPR120_IRQn                            = 200,      /*!< 200 VPR120                                                           */
   IPCT120_0_IRQn                         = 209,      /*!< 209 IPCT120_0                                                        */
   I3C120_IRQn                            = 211,      /*!< 211 I3C120                                                           */
   VPR121_IRQn                            = 212,      /*!< 212 VPR121                                                           */
@@ -98,7 +94,6 @@ typedef enum {
   WDT131_IRQn                            = 299,      /*!< 299 WDT131                                                           */
   WDT132_IRQn                            = 300,      /*!< 300 WDT132                                                           */
   EGU130_IRQn                            = 301,      /*!< 301 EGU130                                                           */
-  RESETHUB_IRQn                          = 329,      /*!< 329 RESETHUB                                                         */
   SAADC_IRQn                             = 386,      /*!< 386 SAADC                                                            */
   COMP_LPCOMP_IRQn                       = 387,      /*!< 387 COMP_LPCOMP                                                      */
   TEMP_IRQn                              = 388,      /*!< 388 TEMP                                                             */
@@ -107,7 +102,6 @@ typedef enum {
   PDM_IRQn                               = 403,      /*!< 403 PDM                                                              */
   QDEC130_IRQn                           = 404,      /*!< 404 QDEC130                                                          */
   QDEC131_IRQn                           = 405,      /*!< 405 QDEC131                                                          */
-  SIMIF130_IRQn                          = 406,      /*!< 406 SIMIF130                                                         */
   TDM131_IRQn                            = 407,      /*!< 407 TDM131                                                           */
   TIMER130_IRQn                          = 418,      /*!< 418 TIMER130                                                         */
   TIMER131_IRQn                          = 419,      /*!< 419 TIMER131                                                         */
@@ -131,6 +125,95 @@ typedef enum {
   SERIAL7_IRQn                           = 470,      /*!< 470 SERIAL7                                                          */
 } IRQn_Type;
 
+/* ==================================================== Interrupt Aliases ==================================================== */
+#define SPIM120_IRQn                  SPIM120_UARTE120_IRQn
+#define SPIM120_IRQHandler            SPIM120_UARTE120_IRQHandler
+#define UARTE120_IRQn                 SPIM120_UARTE120_IRQn
+#define UARTE120_IRQHandler           SPIM120_UARTE120_IRQHandler
+#define COMP_IRQn                     COMP_LPCOMP_IRQn
+#define COMP_IRQHandler               COMP_LPCOMP_IRQHandler
+#define LPCOMP_IRQn                   COMP_LPCOMP_IRQn
+#define LPCOMP_IRQHandler             COMP_LPCOMP_IRQHandler
+#define SPIM130_IRQn                  SERIAL0_IRQn
+#define SPIM130_IRQHandler            SERIAL0_IRQHandler
+#define SPIS130_IRQn                  SERIAL0_IRQn
+#define SPIS130_IRQHandler            SERIAL0_IRQHandler
+#define TWIM130_IRQn                  SERIAL0_IRQn
+#define TWIM130_IRQHandler            SERIAL0_IRQHandler
+#define TWIS130_IRQn                  SERIAL0_IRQn
+#define TWIS130_IRQHandler            SERIAL0_IRQHandler
+#define UARTE130_IRQn                 SERIAL0_IRQn
+#define UARTE130_IRQHandler           SERIAL0_IRQHandler
+#define SPIM131_IRQn                  SERIAL1_IRQn
+#define SPIM131_IRQHandler            SERIAL1_IRQHandler
+#define SPIS131_IRQn                  SERIAL1_IRQn
+#define SPIS131_IRQHandler            SERIAL1_IRQHandler
+#define TWIM131_IRQn                  SERIAL1_IRQn
+#define TWIM131_IRQHandler            SERIAL1_IRQHandler
+#define TWIS131_IRQn                  SERIAL1_IRQn
+#define TWIS131_IRQHandler            SERIAL1_IRQHandler
+#define UARTE131_IRQn                 SERIAL1_IRQn
+#define UARTE131_IRQHandler           SERIAL1_IRQHandler
+#define SPIM132_IRQn                  SERIAL2_IRQn
+#define SPIM132_IRQHandler            SERIAL2_IRQHandler
+#define SPIS132_IRQn                  SERIAL2_IRQn
+#define SPIS132_IRQHandler            SERIAL2_IRQHandler
+#define TWIM132_IRQn                  SERIAL2_IRQn
+#define TWIM132_IRQHandler            SERIAL2_IRQHandler
+#define TWIS132_IRQn                  SERIAL2_IRQn
+#define TWIS132_IRQHandler            SERIAL2_IRQHandler
+#define UARTE132_IRQn                 SERIAL2_IRQn
+#define UARTE132_IRQHandler           SERIAL2_IRQHandler
+#define SPIM133_IRQn                  SERIAL3_IRQn
+#define SPIM133_IRQHandler            SERIAL3_IRQHandler
+#define SPIS133_IRQn                  SERIAL3_IRQn
+#define SPIS133_IRQHandler            SERIAL3_IRQHandler
+#define TWIM133_IRQn                  SERIAL3_IRQn
+#define TWIM133_IRQHandler            SERIAL3_IRQHandler
+#define TWIS133_IRQn                  SERIAL3_IRQn
+#define TWIS133_IRQHandler            SERIAL3_IRQHandler
+#define UARTE133_IRQn                 SERIAL3_IRQn
+#define UARTE133_IRQHandler           SERIAL3_IRQHandler
+#define SPIM134_IRQn                  SERIAL4_IRQn
+#define SPIM134_IRQHandler            SERIAL4_IRQHandler
+#define SPIS134_IRQn                  SERIAL4_IRQn
+#define SPIS134_IRQHandler            SERIAL4_IRQHandler
+#define TWIM134_IRQn                  SERIAL4_IRQn
+#define TWIM134_IRQHandler            SERIAL4_IRQHandler
+#define TWIS134_IRQn                  SERIAL4_IRQn
+#define TWIS134_IRQHandler            SERIAL4_IRQHandler
+#define UARTE134_IRQn                 SERIAL4_IRQn
+#define UARTE134_IRQHandler           SERIAL4_IRQHandler
+#define SPIM135_IRQn                  SERIAL5_IRQn
+#define SPIM135_IRQHandler            SERIAL5_IRQHandler
+#define SPIS135_IRQn                  SERIAL5_IRQn
+#define SPIS135_IRQHandler            SERIAL5_IRQHandler
+#define TWIM135_IRQn                  SERIAL5_IRQn
+#define TWIM135_IRQHandler            SERIAL5_IRQHandler
+#define TWIS135_IRQn                  SERIAL5_IRQn
+#define TWIS135_IRQHandler            SERIAL5_IRQHandler
+#define UARTE135_IRQn                 SERIAL5_IRQn
+#define UARTE135_IRQHandler           SERIAL5_IRQHandler
+#define SPIM136_IRQn                  SERIAL6_IRQn
+#define SPIM136_IRQHandler            SERIAL6_IRQHandler
+#define SPIS136_IRQn                  SERIAL6_IRQn
+#define SPIS136_IRQHandler            SERIAL6_IRQHandler
+#define TWIM136_IRQn                  SERIAL6_IRQn
+#define TWIM136_IRQHandler            SERIAL6_IRQHandler
+#define TWIS136_IRQn                  SERIAL6_IRQn
+#define TWIS136_IRQHandler            SERIAL6_IRQHandler
+#define UARTE136_IRQn                 SERIAL6_IRQn
+#define UARTE136_IRQHandler           SERIAL6_IRQHandler
+#define SPIM137_IRQn                  SERIAL7_IRQn
+#define SPIM137_IRQHandler            SERIAL7_IRQHandler
+#define SPIS137_IRQn                  SERIAL7_IRQn
+#define SPIS137_IRQHandler            SERIAL7_IRQHandler
+#define TWIM137_IRQn                  SERIAL7_IRQn
+#define TWIM137_IRQHandler            SERIAL7_IRQHandler
+#define TWIS137_IRQn                  SERIAL7_IRQn
+#define TWIS137_IRQHandler            SERIAL7_IRQHandler
+#define UARTE137_IRQn                 SERIAL7_IRQn
+#define UARTE137_IRQHandler           SERIAL7_IRQHandler
 
 /* =========================================================================================================================== */
 /* ================                           Processor and Core Peripheral Section                           ================ */
@@ -138,6 +221,9 @@ typedef enum {
 
 /* ====================== Configuration of the Nordic Semiconductor VPR Processor and Core Peripherals ======================= */
 #define __VPR_REV                    1.1             /*!< VPR Core Revision                                                    */
+#define __VPR_REV_MAJOR                1             /*!< VPR Core Major Revision                                              */
+#define __VPR_REV_MINOR                1             /*!< VPR Core Minor Revision                                              */
+#define __VPR_REV_PATCH                0             /*!< VPR Core Patch Revision                                              */
 #define __DSP_PRESENT                  0             /*!< DSP present or not                                                   */
 #define __CLIC_PRIO_BITS               3             /*!< Number of Bits used for Priority Levels                              */
 #define __MTVT_PRESENT                 1             /*!< CPU supports alternate Vector Table address                          */
@@ -146,8 +232,20 @@ typedef enum {
 #define __FPU_DP                       0             /*!< Double Precision FPU                                                 */
 #define __INTERRUPTS_MAX             480             /*!< Size of interrupt vector table                                       */
 
+#define NRF_VPR               NRF_VPR130             /*!< VPR instance name                                                    */
 #include "core_vpr.h"                                /*!< Nordic Semiconductor VPR processor and core peripherals              */
 #include "system_nrf.h"                              /*!< nrf54h20_ppr System Library                                          */
+
+#endif                                               /*!< NRF_PPR                                                              */
+
+
+#ifdef NRF_PPR
+
+  #define NRF_DOMAIN                    NRF_DOMAIN_GLOBALSLOW
+  #define NRF_PROCESSOR                 NRF_PROCESSOR_PPR
+  #ifndef NRF_OWNER
+    #define NRF_OWNER                   NRF_OWNER_APPLICATION
+  #endif
 
 #endif                                               /*!< NRF_PPR                                                              */
 
@@ -195,7 +293,7 @@ typedef enum {
 /* ================                                  Local Domain Remapping                                  ================ */
 /* =========================================================================================================================== */
 
-#ifdef NRF_PPR                                       /*!< Remap NRF_DOMAIN instances to NRF_X symbol for ease of use.          */
+#ifdef NRF_PPR                                       /*!< Remap NRF_DOMAIN_X instances to NRF_X symbol for ease of use.        */
   #define NRF_VPRCLIC                             NRF_PPR_VPRCLIC
 #endif                                               /*!< NRF_PPR                                                              */
 

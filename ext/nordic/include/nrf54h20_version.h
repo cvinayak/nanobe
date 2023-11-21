@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA All rights reserved.
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -42,9 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define MDK_SOURCE_VERSION_MAJOR 0                   /*!< Major version of product specification.                              */
 #define MDK_SOURCE_VERSION_MINOR 2                   /*!< Minor version of product specification.                              */
-#define MDK_SOURCE_VERSION_MICRO 23                  /*!< Micro version of product specification.                              */
-
-#define MDK_SOURCE_HASH Lilium_FP1_IPS_v0.2.22-150-gca8ee14f /*!< Git hash of product specification source.                    */
+#define MDK_SOURCE_VERSION_MICRO 34                  /*!< Micro version of product specification.                              */
 
 
 #ifdef __cplusplus

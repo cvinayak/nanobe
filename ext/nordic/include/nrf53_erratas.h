@@ -3,42 +3,35 @@
 
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
-All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 
-2. Redistributions in binary form, except as embedded into a Nordic
-   Semiconductor ASA integrated circuit in a product or a software update for
-   such product, must reproduce the above copyright notice, this list of
-   conditions and the following disclaimer in the documentation and/or other
-   materials provided with the distribution.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
 
 3. Neither the name of Nordic Semiconductor ASA nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
 
-4. This software, with or without modification, must only be used with a
-   Nordic Semiconductor ASA integrated circuit.
-
-5. Any software provided in binary form under this license must not be reverse
-   engineered, decompiled, modified and/or disassembled.
-
-THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -152,11 +145,16 @@ static bool nrf53_errata_154(void) __UNUSED;
 static bool nrf53_errata_155(void) __UNUSED;
 static bool nrf53_errata_157(void) __UNUSED;
 static bool nrf53_errata_158(void) __UNUSED;
+static bool nrf53_errata_159(void) __UNUSED;
 static bool nrf53_errata_160(void) __UNUSED;
 static bool nrf53_errata_161(void) __UNUSED;
 static bool nrf53_errata_162(void) __UNUSED;
 static bool nrf53_errata_163(void) __UNUSED;
 static bool nrf53_errata_165(void) __UNUSED;
+static bool nrf53_errata_166(void) __UNUSED;
+static bool nrf53_errata_167(void) __UNUSED;
+static bool nrf53_errata_168(void) __UNUSED;
+static bool nrf53_errata_169(void) __UNUSED;
 
 /* ========= Errata 1 ========= */
 #if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
@@ -5910,6 +5908,61 @@ static bool nrf53_errata_158(void)
     #endif
 }
 
+/* ========= Errata 159 ========= */
+#if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+    #if defined(NRF_APPLICATION)
+        #define NRF53_ERRATA_159_PRESENT 1
+    #else
+        #define NRF53_ERRATA_159_PRESENT 0
+    #endif
+#else
+    #define NRF53_ERRATA_159_PRESENT 0
+#endif
+
+#ifndef NRF53_ERRATA_159_ENABLE_WORKAROUND
+    #define NRF53_ERRATA_159_ENABLE_WORKAROUND NRF53_ERRATA_159_PRESENT
+#endif
+
+static bool nrf53_errata_159(void)
+{
+    #ifndef NRF53_SERIES
+        return false;
+    #else
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined(NRF_APPLICATION)
+                #if defined(NRF_TRUSTZONE_NONSECURE)
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000134ul));
+                #else
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000134ul));
+                #endif
+            #endif
+        #endif
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined (NRF_APPLICATION)
+                if (var1 == 0x07)
+                {
+                    switch(var2)
+                    {
+                        case 0x02ul:
+                            return false;
+                        case 0x03ul:
+                            return false;
+                        case 0x04ul:
+                            return false;
+                        case 0x05ul:
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+            #endif
+        #endif
+        return false;
+    #endif
+}
+
 /* ========= Errata 160 ========= */
 #if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
     #if defined(NRF_APPLICATION) || \
@@ -6193,6 +6246,236 @@ static bool nrf53_errata_165(void)
                             return false;
                         case 0x04ul:
                             return false;
+                        case 0x05ul:
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+            #endif
+        #endif
+        return false;
+    #endif
+}
+
+/* ========= Errata 166 ========= */
+#if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+    #if defined(NRF_APPLICATION)
+        #define NRF53_ERRATA_166_PRESENT 1
+    #else
+        #define NRF53_ERRATA_166_PRESENT 0
+    #endif
+#else
+    #define NRF53_ERRATA_166_PRESENT 0
+#endif
+
+#ifndef NRF53_ERRATA_166_ENABLE_WORKAROUND
+    #define NRF53_ERRATA_166_ENABLE_WORKAROUND NRF53_ERRATA_166_PRESENT
+#endif
+
+static bool nrf53_errata_166(void)
+{
+    #ifndef NRF53_SERIES
+        return false;
+    #else
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined(NRF_APPLICATION)
+                #if defined(NRF_TRUSTZONE_NONSECURE)
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000134ul));
+                #else
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000134ul));
+                #endif
+            #endif
+        #endif
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined (NRF_APPLICATION)
+                if (var1 == 0x07)
+                {
+                    switch(var2)
+                    {
+                        case 0x02ul:
+                            return false;
+                        case 0x03ul:
+                            return false;
+                        case 0x04ul:
+                            return false;
+                        case 0x05ul:
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+            #endif
+        #endif
+        return false;
+    #endif
+}
+
+/* ========= Errata 167 ========= */
+#if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+    #if defined(NRF_APPLICATION)
+        #define NRF53_ERRATA_167_PRESENT 1
+    #else
+        #define NRF53_ERRATA_167_PRESENT 0
+    #endif
+#else
+    #define NRF53_ERRATA_167_PRESENT 0
+#endif
+
+#ifndef NRF53_ERRATA_167_ENABLE_WORKAROUND
+    #define NRF53_ERRATA_167_ENABLE_WORKAROUND NRF53_ERRATA_167_PRESENT
+#endif
+
+static bool nrf53_errata_167(void)
+{
+    #ifndef NRF53_SERIES
+        return false;
+    #else
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined(NRF_APPLICATION)
+                #if defined(NRF_TRUSTZONE_NONSECURE)
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000134ul));
+                #else
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000134ul));
+                #endif
+            #endif
+        #endif
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined (NRF_APPLICATION)
+                if (var1 == 0x07)
+                {
+                    switch(var2)
+                    {
+                        case 0x02ul:
+                            return false;
+                        case 0x03ul:
+                            return false;
+                        case 0x04ul:
+                            return false;
+                        case 0x05ul:
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+            #endif
+        #endif
+        return false;
+    #endif
+}
+
+/* ========= Errata 168 ========= */
+#if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+    #if defined(NRF_APPLICATION) || \
+        defined(NRF_NETWORK)
+        #define NRF53_ERRATA_168_PRESENT 1
+    #else
+        #define NRF53_ERRATA_168_PRESENT 0
+    #endif
+#else
+    #define NRF53_ERRATA_168_PRESENT 0
+#endif
+
+#ifndef NRF53_ERRATA_168_ENABLE_WORKAROUND
+    #define NRF53_ERRATA_168_ENABLE_WORKAROUND NRF53_ERRATA_168_PRESENT
+#endif
+
+static bool nrf53_errata_168(void)
+{
+    #ifndef NRF53_SERIES
+        return false;
+    #else
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined(NRF_APPLICATION)
+                #if defined(NRF_TRUSTZONE_NONSECURE)
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000134ul));
+                #else
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000134ul));
+                #endif
+            #elif defined(NRF_NETWORK)
+                uint32_t var1 = *(uint32_t *)0x01FF0130ul;
+                uint32_t var2 = *(uint32_t *)0x01FF0134ul;
+            #endif
+        #endif
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined (NRF_APPLICATION)\
+             || defined (NRF_NETWORK)
+                if (var1 == 0x07)
+                {
+                    switch(var2)
+                    {
+                        case 0x02ul:
+                            return false;
+                        case 0x03ul:
+                            return false;
+                        case 0x04ul:
+                            return false;
+                        case 0x05ul:
+                            return true;
+                        default:
+                            return true;
+                    }
+                }
+            #endif
+        #endif
+        return false;
+    #endif
+}
+
+/* ========= Errata 169 ========= */
+#if    defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+    #if defined(NRF_APPLICATION) || \
+        defined(NRF_NETWORK)
+        #define NRF53_ERRATA_169_PRESENT 1
+    #else
+        #define NRF53_ERRATA_169_PRESENT 0
+    #endif
+#else
+    #define NRF53_ERRATA_169_PRESENT 0
+#endif
+
+#ifndef NRF53_ERRATA_169_ENABLE_WORKAROUND
+    #define NRF53_ERRATA_169_ENABLE_WORKAROUND NRF53_ERRATA_169_PRESENT
+#endif
+
+static bool nrf53_errata_169(void)
+{
+    #ifndef NRF53_SERIES
+        return false;
+    #else
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined(NRF_APPLICATION)
+                #if defined(NRF_TRUSTZONE_NONSECURE)
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_NS + 0x00000134ul));
+                #else
+                    uint32_t var1 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000130ul));
+                    uint32_t var2 = *((volatile uint32_t *)((uint32_t)NRF_FICR_S + 0x00000134ul));
+                #endif
+            #elif defined(NRF_NETWORK)
+                uint32_t var1 = *(uint32_t *)0x01FF0130ul;
+                uint32_t var2 = *(uint32_t *)0x01FF0134ul;
+            #endif
+        #endif
+        #if defined (NRF5340_XXAA) || defined (DEVELOP_IN_NRF5340)
+            #if defined (NRF_APPLICATION)\
+             || defined (NRF_NETWORK)
+                if (var1 == 0x07)
+                {
+                    switch(var2)
+                    {
+                        case 0x02ul:
+                            return true;
+                        case 0x03ul:
+                            return true;
+                        case 0x04ul:
+                            return true;
                         case 0x05ul:
                             return true;
                         default:

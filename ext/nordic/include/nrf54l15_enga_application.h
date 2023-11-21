@@ -1,46 +1,39 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
-All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 
-2. Redistributions in binary form, except as embedded into a Nordic
-   Semiconductor ASA integrated circuit in a product or a software update for
-   such product, must reproduce the above copyright notice, this list of
-   conditions and the following disclaimer in the documentation and/or other
-   materials provided with the distribution.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
 
 3. Neither the name of Nordic Semiconductor ASA nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
 
-4. This software, with or without modification, must only be used with a
-   Nordic Semiconductor ASA integrated circuit.
-
-5. Any software provided in binary form under this license must not be reverse
-   engineered, decompiled, modified and/or disassembled.
-
-THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef NRF54L15_APPLICATION_H
-#define NRF54L15_APPLICATION_H
+#ifndef NRF54L15_ENGA_APPLICATION_H
+#define NRF54L15_ENGA_APPLICATION_H
 
 #ifdef __cplusplus
     extern "C" {
@@ -89,8 +82,6 @@ typedef enum {
   TIMER10_IRQn                           = 133,      /*!< 133 TIMER10                                                          */
   RTC10_IRQn                             = 134,      /*!< 134 RTC10                                                            */
   EGU10_IRQn                             = 135,      /*!< 135 EGU10                                                            */
-  AAR10_CCM10_IRQn                       = 136,      /*!< 136 AAR10_CCM10                                                      */
-  ECB10_IRQn                             = 137,      /*!< 137 ECB10                                                            */
   RADIO_0_IRQn                           = 138,      /*!< 138 RADIO_0                                                          */
   RADIO_1_IRQn                           = 139,      /*!< 139 RADIO_1                                                          */
   SPU20_IRQn                             = 192,      /*!< 192 SPU20                                                            */
@@ -130,6 +121,65 @@ typedef enum {
   CLOCK_POWER_IRQn                       = 270,      /*!< 270 CLOCK_POWER                                                      */
 } IRQn_Type;
 
+/* ==================================================== Interrupt Aliases ==================================================== */
+#define AAR00_IRQn                    AAR00_CCM00_IRQn
+#define AAR00_IRQHandler              AAR00_CCM00_IRQHandler
+#define CCM00_IRQn                    AAR00_CCM00_IRQn
+#define CCM00_IRQHandler              AAR00_CCM00_IRQHandler
+#define SPIM00_IRQn                   SERIAL00_IRQn
+#define SPIM00_IRQHandler             SERIAL00_IRQHandler
+#define SPIS00_IRQn                   SERIAL00_IRQn
+#define SPIS00_IRQHandler             SERIAL00_IRQHandler
+#define UARTE00_IRQn                  SERIAL00_IRQn
+#define UARTE00_IRQHandler            SERIAL00_IRQHandler
+#define SPIM20_IRQn                   SERIAL20_IRQn
+#define SPIM20_IRQHandler             SERIAL20_IRQHandler
+#define SPIS20_IRQn                   SERIAL20_IRQn
+#define SPIS20_IRQHandler             SERIAL20_IRQHandler
+#define TWIM20_IRQn                   SERIAL20_IRQn
+#define TWIM20_IRQHandler             SERIAL20_IRQHandler
+#define TWIS20_IRQn                   SERIAL20_IRQn
+#define TWIS20_IRQHandler             SERIAL20_IRQHandler
+#define UARTE20_IRQn                  SERIAL20_IRQn
+#define UARTE20_IRQHandler            SERIAL20_IRQHandler
+#define SPIM21_IRQn                   SERIAL21_IRQn
+#define SPIM21_IRQHandler             SERIAL21_IRQHandler
+#define SPIS21_IRQn                   SERIAL21_IRQn
+#define SPIS21_IRQHandler             SERIAL21_IRQHandler
+#define TWIM21_IRQn                   SERIAL21_IRQn
+#define TWIM21_IRQHandler             SERIAL21_IRQHandler
+#define TWIS21_IRQn                   SERIAL21_IRQn
+#define TWIS21_IRQHandler             SERIAL21_IRQHandler
+#define UARTE21_IRQn                  SERIAL21_IRQn
+#define UARTE21_IRQHandler            SERIAL21_IRQHandler
+#define SPIM22_IRQn                   SERIAL22_IRQn
+#define SPIM22_IRQHandler             SERIAL22_IRQHandler
+#define SPIS22_IRQn                   SERIAL22_IRQn
+#define SPIS22_IRQHandler             SERIAL22_IRQHandler
+#define TWIM22_IRQn                   SERIAL22_IRQn
+#define TWIM22_IRQHandler             SERIAL22_IRQHandler
+#define TWIS22_IRQn                   SERIAL22_IRQn
+#define TWIS22_IRQHandler             SERIAL22_IRQHandler
+#define UARTE22_IRQn                  SERIAL22_IRQn
+#define UARTE22_IRQHandler            SERIAL22_IRQHandler
+#define SPIM30_IRQn                   SERIAL30_IRQn
+#define SPIM30_IRQHandler             SERIAL30_IRQHandler
+#define SPIS30_IRQn                   SERIAL30_IRQn
+#define SPIS30_IRQHandler             SERIAL30_IRQHandler
+#define TWIM30_IRQn                   SERIAL30_IRQn
+#define TWIM30_IRQHandler             SERIAL30_IRQHandler
+#define TWIS30_IRQn                   SERIAL30_IRQn
+#define TWIS30_IRQHandler             SERIAL30_IRQHandler
+#define UARTE30_IRQn                  SERIAL30_IRQn
+#define UARTE30_IRQHandler            SERIAL30_IRQHandler
+#define COMP_IRQn                     COMP_LPCOMP_IRQn
+#define COMP_IRQHandler               COMP_LPCOMP_IRQHandler
+#define LPCOMP_IRQn                   COMP_LPCOMP_IRQn
+#define LPCOMP_IRQHandler             COMP_LPCOMP_IRQHandler
+#define CLOCK_IRQn                    CLOCK_POWER_IRQn
+#define CLOCK_IRQHandler              CLOCK_POWER_IRQHandler
+#define POWER_IRQn                    CLOCK_POWER_IRQn
+#define POWER_IRQHandler              CLOCK_POWER_IRQHandler
 
 /* =========================================================================================================================== */
 /* ================                           Processor and Core Peripheral Section                           ================ */
@@ -143,13 +193,21 @@ typedef enum {
 #define __MPU_PRESENT                  1             /*!< MPU present                                                          */
 #define __FPU_PRESENT                  1             /*!< FPU present                                                          */
 #define __FPU_DP                       0             /*!< Double Precision FPU                                                 */
-#define __INTERRUPTS_MAX             176             /*!< Size of interrupt vector table                                       */
+#define __INTERRUPTS_MAX             270             /*!< Size of interrupt vector table                                       */
 #define __Vendor_SysTickConfig         0             /*!< Vendor SysTick Config implementation is used                         */
 #define __SAUREGION_PRESENT            1             /*!< SAU present                                                          */
 #define __NUM_SAUREGIONS               4             /*!< Number of regions                                                    */
 
 #include "core_cm33.h"                               /*!< ARM Cortex-M33 processor and core peripherals                        */
-#include "system_nrf.h"                              /*!< nrf54l15_application System Library                                  */
+#include "system_nrf.h"                              /*!< nrf54l15_enga_application System Library                             */
+
+#endif                                               /*!< NRF_APPLICATION                                                      */
+
+
+#ifdef NRF_APPLICATION
+
+  #define NRF_DOMAIN                    NRF_DOMAIN_NONE
+  #define NRF_PROCESSOR                 NRF_PROCESSOR_CM33
 
 #endif                                               /*!< NRF_APPLICATION                                                      */
 
@@ -229,23 +287,28 @@ typedef enum {
   #define NRF_APPLICATION_SWI01                   NRF_APPLICATION_SWI01_S
   #define NRF_APPLICATION_SWI02                   NRF_APPLICATION_SWI02_S
   #define NRF_APPLICATION_SWI03                   NRF_APPLICATION_SWI03_S
-#endif                                               /*!<  NRF_TRUSTZONE_NONSECURE                                             */
+#endif                                               /*!< NRF_TRUSTZONE_NONSECURE                                              */
 
 /* =========================================================================================================================== */
 /* ================                                  Local Domain Remapping                                  ================ */
 /* =========================================================================================================================== */
 
-#ifdef NRF_APPLICATION                               /*!< Remap NRF_DOMAIN instances to NRF_X symbol for ease of use.          */
-  #define NRF_ICACHEDATA                          NRF_APPLICATION_ICACHEDATA
-  #define NRF_ICACHEINFO                          NRF_APPLICATION_ICACHEINFO
-  #define NRF_TPIU                                NRF_APPLICATION_TPIU
-  #define NRF_ETM                                 NRF_APPLICATION_ETM
-  #define NRF_CPUC                                NRF_APPLICATION_CPUC
-  #define NRF_ICACHE                              NRF_APPLICATION_ICACHE
-  #define NRF_SWI00                               NRF_APPLICATION_SWI00
-  #define NRF_SWI01                               NRF_APPLICATION_SWI01
-  #define NRF_SWI02                               NRF_APPLICATION_SWI02
-  #define NRF_SWI03                               NRF_APPLICATION_SWI03
+#ifdef NRF_APPLICATION                               /*!< Remap NRF_DOMAIN_X instances to NRF_X symbol for ease of use.        */
+  #ifdef NRF_TRUSTZONE_NONSECURE                     /*!< Remap only nonsecure instances.                                      */
+    #define NRF_TPIU                              NRF_APPLICATION_TPIU
+    #define NRF_ETM                               NRF_APPLICATION_ETM
+  #else                                              /*!< Remap all instances.                                                 */
+    #define NRF_ICACHEDATA                        NRF_APPLICATION_ICACHEDATA
+    #define NRF_ICACHEINFO                        NRF_APPLICATION_ICACHEINFO
+    #define NRF_TPIU                              NRF_APPLICATION_TPIU
+    #define NRF_ETM                               NRF_APPLICATION_ETM
+    #define NRF_CPUC                              NRF_APPLICATION_CPUC
+    #define NRF_ICACHE                            NRF_APPLICATION_ICACHE
+    #define NRF_SWI00                             NRF_APPLICATION_SWI00
+    #define NRF_SWI01                             NRF_APPLICATION_SWI01
+    #define NRF_SWI02                             NRF_APPLICATION_SWI02
+    #define NRF_SWI03                             NRF_APPLICATION_SWI03
+  #endif                                             /*!< NRF_TRUSTZONE_NONSECURE                                              */
 #endif                                               /*!< NRF_APPLICATION                                                      */
 
 /* ========================================== End of section using anonymous unions ========================================== */
@@ -270,5 +333,5 @@ typedef enum {
 #ifdef __cplusplus
 }
 #endif
-#endif /* NRF54L15_APPLICATION_H */
+#endif /* NRF54L15_ENGA_APPLICATION_H */
 

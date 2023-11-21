@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA All rights reserved.
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -43,12 +43,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "nrf54h20_global.h"
 #include "nrf54h20_application.h"
-#include "nrf54h20_bbpr.h"
 #include "nrf54h20_flpr.h"
 #include "nrf54h20_ppr.h"
 #include "nrf54h20_radiocore.h"
-#include "nrf54h20_secure.h"
-#include "nrf54h20_sysctrl.h"
 
 #ifdef __cplusplus
 }

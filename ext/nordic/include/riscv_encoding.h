@@ -203,7 +203,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __RISCV_ISR __ALIGN(8) __attribute__((interrupt))
 #define __VPR_ISR __ALIGN(8)
 
-#if __riscv_xlen == 64
+#if defined(__riscv_xlen) && (__riscv_xlen == 64)
 # define MSTATUS_SD MSTATUS64_SD
 # define SSTATUS_SD SSTATUS64_SD
 # define RISCV_PGLEVEL_BITS 9

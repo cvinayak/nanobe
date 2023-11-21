@@ -1,41 +1,34 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
-All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 
-2. Redistributions in binary form, except as embedded into a Nordic
-   Semiconductor ASA integrated circuit in a product or a software update for
-   such product, must reproduce the above copyright notice, this list of
-   conditions and the following disclaimer in the documentation and/or other
-   materials provided with the distribution.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
 
 3. Neither the name of Nordic Semiconductor ASA nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
 
-4. This software, with or without modification, must only be used with a
-   Nordic Semiconductor ASA integrated circuit.
-
-5. Any software provided in binary form under this license must not be reverse
-   engineered, decompiled, modified and/or disassembled.
-
-THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -44,10 +37,10 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* MDK version */
 #define MDK_MAJOR_VERSION   8 
-#define MDK_MINOR_VERSION   57 
+#define MDK_MINOR_VERSION   67 
 #define MDK_MICRO_VERSION   0 
 
-
+   
 /* Define coprocessor domains */
 #if defined (NRF5340_XXAA_APPLICATION) || defined (NRF5340_XXAA_NETWORK)
     #ifndef NRF5340_XXAA
@@ -119,9 +112,23 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #endif
 #endif
 
-#if defined (NRF7140_XXAA)
-    #ifndef NRF71_SERIES
-        #define NRF71_SERIES
+/* Define NRF54H_SERIES for common use in nRF54H series devices */
+#if defined (NRF54H20_ENGA_XXAA) || defined (NRF54H20_ENGB_XXAA) ||defined (NRF54H20_XXAA)
+    #ifndef NRF54H_SERIES
+        #define NRF54H_SERIES
+    #endif
+    #ifndef HALTIUM_XXAA
+        #define HALTIUM_XXAA
+    #endif
+#endif
+
+/* Define NRF54L_SERIES for common use in nRF54L series devices */
+#if defined (NRF54L15_ENGA_XXAA) || defined (NRF54L15_XXAA) ||  defined (NRF54L20_ENGA_XXAA)
+    #ifndef NRF54L_SERIES
+        #define NRF54L_SERIES
+    #endif
+    #ifndef LUMOS_XXAA
+        #define LUMOS_XXAA
     #endif
 #endif
 
@@ -132,126 +139,68 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #endif
 #endif
 
-/* Define NRF92_SERIES for common use in nRF91 series devices. */
-#if defined (NRF9230_XXAA)
+/* Define NRF92_SERIES for common use in nRF92 series devices. */
+#if defined(NRF9230_ENGB_XXAA)
     #ifndef NRF92_SERIES
         #define NRF92_SERIES
+    #endif
+    #ifndef HALTIUM_XXAA
+        #define HALTIUM_XXAA
     #endif
 #endif
 
 /* Device selection for device includes. */
 #if defined (NRF51)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf51.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf51_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_deprecated.h"
-    #endif
+    #include "nrf51.h"
+    #include "nrf51_bitfields.h"
+    #include "nrf51_deprecated.h"
 
 #elif defined (NRF52805_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52805.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52805_bitfields.h"
-    #endif
-
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52810.h"
-        #include "nrf52_to_nrf52810.h"
-        #include "nrf52810_to_nrf52811.h"
-    #endif
-
+    #include "nrf52805.h"
+    #include "nrf52805_bitfields.h"
+    #include "nrf51_to_nrf52810.h"
+    #include "nrf52_to_nrf52810.h"
+    #include "nrf52810_to_nrf52811.h"
 #elif defined (NRF52810_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52810.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52810_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52810.h"
-        #include "nrf52_to_nrf52810.h"
-        #include "nrf52810_name_change.h"
-    #endif
-
+    #include "nrf52810.h"
+    #include "nrf52810_bitfields.h"
+    #include "nrf51_to_nrf52810.h"
+    #include "nrf52_to_nrf52810.h"
+    #include "nrf52810_name_change.h"
 #elif defined (NRF52811_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52811.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52811_bitfields.h"
-    #endif
-
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52810.h"
-        #include "nrf52_to_nrf52810.h"
-        #include "nrf52810_to_nrf52811.h"
-    #endif
-
+    #include "nrf52811.h"
+    #include "nrf52811_bitfields.h"
+    #include "nrf51_to_nrf52810.h"
+    #include "nrf52_to_nrf52810.h"
+    #include "nrf52810_to_nrf52811.h"
 #elif defined (NRF52820_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52820.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52820_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52.h"
-        #include "nrf52_to_nrf52833.h"
-        #include "nrf52833_to_nrf52820.h"
-    #endif
-
+    #include "nrf52820.h"
+    #include "nrf52820_bitfields.h"
+    #include "nrf51_to_nrf52.h"
+    #include "nrf52_to_nrf52833.h"
+    #include "nrf52833_to_nrf52820.h"
 #elif defined (NRF52832_XXAA) || defined (NRF52832_XXAB)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52.h"
-        #include "nrf52_name_change.h"
-    #endif
-
+    #include "nrf52.h"
+    #include "nrf52_bitfields.h"
+    #include "nrf51_to_nrf52.h"
+    #include "nrf52_name_change.h"
 #elif defined (NRF52833_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52833.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52833_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52.h"
-        #include "nrf52_to_nrf52833.h"
-    #endif
-
+    #include "nrf52833.h"
+    #include "nrf52833_bitfields.h"
+    #include "nrf52_to_nrf52833.h"
+    #include "nrf51_to_nrf52.h"
 #elif defined (NRF52840_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf52840.h"
-    #endif
-    #if !defined(EXCLUDE_BITFIELDS)
-        #include "nrf52840_bitfields.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "nrf51_to_nrf52840.h"
-        #include "nrf52_to_nrf52840.h"
-    #endif
+    #include "nrf52840.h"
+    #include "nrf52840_bitfields.h"
+    #include "nrf51_to_nrf52840.h"
+    #include "nrf52_to_nrf52840.h"
+    #include "nrf52840_name_change.h"
 
 #elif defined (NRF5340_XXAA)
     #if defined(NRF_APPLICATION)
-        #if !defined(EXCLUDE_HEADER)
-            #include "nrf5340_application.h"
-        #endif
-        #if !defined(EXCLUDE_BITFIELDS)
-            #include "nrf5340_application_bitfields.h"
-        #endif
-        #if !defined(EXCLUDE_PORTABILITY)
-            #include "nrf5340_application_name_change.h"
-        #endif
+        #include "nrf5340_application.h"
+        #include "nrf5340_application_bitfields.h"
+        #include "nrf5340_application_name_change.h"
 
         /* Address of locations in RAM that will be used to store a NS-accessible version of FICR */
         #if !defined(NRF_FICR_NS)
@@ -259,37 +208,40 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             #define NRF_FICR_NS ((NRF_FICR_Type*)          NRF_FICR_NS_BASE)
         #endif
     #elif defined (NRF_NETWORK)
-        #if !defined(EXCLUDE_HEADER)
-            #include "nrf5340_network.h"
-        #endif
-        #if !defined(EXCLUDE_BITFIELDS)
-            #include "nrf5340_network_bitfields.h"
-        #endif
-        #if !defined(EXCLUDE_PORTABILITY)
-            #include "nrf5340_network_name_change.h"
-        #endif
-    #endif
-
-#elif defined (NRF54H20_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf54h20.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "haltium_name_change.h"
+        #include "nrf5340_network.h"
+        #include "nrf5340_network_bitfields.h"
+        #include "nrf5340_network_name_change.h"
     #endif
 
 #elif defined (NRF54H20_ENGA_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf54h20_enga.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "haltium_name_change.h"
-    #endif
+    #include "nrf54h20_enga.h"
+    #include "nrf54h20_enga_interim.h"
+    #include "nrf54h20_enga_name_change.h"
+
+#elif defined (NRF54H20_ENGB_XXAA)
+    #include "nrf54h20_engb.h"
+    #include "nrf54h20_engb_interim.h"
+    #include "nrf54h20_engb_name_change.h"
+
+#elif defined (NRF54H20_XXAA)
+    #include "nrf54h20.h"
+    #include "nrf54h20_interim.h"
+    #include "nrf54h20_name_change.h"
 
 #elif defined (NRF54L15_ENGA_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf54l15_enga.h"
-    #endif
+    #include "nrf54l15_enga.h"
+    #include "nrf54l15_enga_interim.h"
+    #include "nrf54l15_enga_name_change.h"
+
+#elif defined (NRF54L15_XXAA)
+    #include "nrf54l15.h"
+    #include "nrf54l15_interim.h"
+    #include "nrf54l15_name_change.h"
+
+#elif defined (NRF54L20_ENGA_XXAA)
+    #include "nrf54l20_enga.h"
+    #include "nrf54l20_enga_interim.h"
+    #include "nrf54l20_enga_name_change.h"
 
 #elif defined (NRF9160_XXAA)
     #include "nrf9160.h"
@@ -313,21 +265,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         #define NRF_FICR_NS ((NRF_FICR_Type*)          NRF_FICR_NS_BASE)
     #endif
 
-#elif defined (NRF9230_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf9230.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "haltium_name_change.h"
-    #endif
+#elif defined (NRF9230_ENGB_XXAA)
+    #include "nrf9230_engb.h"
+    #include "nrf9230_engb_interim.h"
+    #include "nrf9230_engb_name_change.h"
 
-#elif defined (NRF7140_XXAA)
-    #if !defined(EXCLUDE_HEADER)
-        #include "nrf7140.h"
-    #endif
-    #if !defined(EXCLUDE_PORTABILITY)
-        #include "haltium_name_change.h"
-    #endif
 #else
     #error "Device must be defined. See nrf.h."
 #endif /* NRF51, NRF52805_XXAA, NRF52810_XXAA, NRF52811_XXAA, NRF52820_XXAA, NRF52832_XXAA, NRF52832_XXAB, NRF52833_XXAA, NRF52840_XXAA, NRF5340_XXAA_APPLICATION, NRF5340_XXAA_NETWORK, NRF9160_XXAA */
@@ -335,3 +277,4 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "compiler_abstraction.h"
 
 #endif /* NRF_H */
+

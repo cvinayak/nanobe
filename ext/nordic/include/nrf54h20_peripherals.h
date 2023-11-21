@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA All rights reserved.
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -41,18 +41,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #if defined(NRF_APPLICATION)
   #include "nrf54h20_application_peripherals.h"
-#elif defined(NRF_BBPR)
-  #include "nrf54h20_bbpr_peripherals.h"
 #elif defined(NRF_FLPR)
   #include "nrf54h20_flpr_peripherals.h"
 #elif defined(NRF_PPR)
   #include "nrf54h20_ppr_peripherals.h"
 #elif defined(NRF_RADIOCORE)
   #include "nrf54h20_radiocore_peripherals.h"
-#elif defined(NRF_SECURE)
-  #include "nrf54h20_secure_peripherals.h"
-#elif defined(NRF_SYSCTRL)
-  #include "nrf54h20_sysctrl_peripherals.h"
 #else
   #error No processor selected
 #endif

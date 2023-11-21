@@ -1,41 +1,34 @@
 /*
 
-Copyright (c) 2010 - 2023, Nordic Semiconductor ASA
+Copyright (c) 2010 - 2024, Nordic Semiconductor ASA All rights reserved.
 
-All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 
-2. Redistributions in binary form, except as embedded into a Nordic
-   Semiconductor ASA integrated circuit in a product or a software update for
-   such product, must reproduce the above copyright notice, this list of
-   conditions and the following disclaimer in the documentation and/or other
-   materials provided with the distribution.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
 
 3. Neither the name of Nordic Semiconductor ASA nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
 
-4. This software, with or without modification, must only be used with a
-   Nordic Semiconductor ASA integrated circuit.
-
-5. Any software provided in binary form under this license must not be reverse
-   engineered, decompiled, modified and/or disassembled.
-
-THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -80,11 +73,7 @@ typedef enum {
   GRTC_1_IRQn                            = 109,      /*!< 109 GRTC_1                                                           */
   TBM_IRQn                               = 127,      /*!< 127 TBM                                                              */
   USBHS_IRQn                             = 134,      /*!< 134 USBHS                                                            */
-  MRAMC110_IRQn                          = 146,      /*!< 146 MRAMC110                                                         */
-  MRAMC111_IRQn                          = 147,      /*!< 147 MRAMC111                                                         */
   EXMIF_IRQn                             = 149,      /*!< 149 EXMIF                                                            */
-  OTPC_IRQn                              = 197,      /*!< 197 OTPC                                                             */
-  VPR120_IRQn                            = 200,      /*!< 200 VPR120                                                           */
   IPCT120_0_IRQn                         = 209,      /*!< 209 IPCT120_0                                                        */
   I3C120_IRQn                            = 211,      /*!< 211 I3C120                                                           */
   VPR121_IRQn                            = 212,      /*!< 212 VPR121                                                           */
@@ -102,7 +91,6 @@ typedef enum {
   RTC131_IRQn                            = 297,      /*!< 297 RTC131                                                           */
   WDT131_IRQn                            = 299,      /*!< 299 WDT131                                                           */
   WDT132_IRQn                            = 300,      /*!< 300 WDT132                                                           */
-  RESETHUB_IRQn                          = 329,      /*!< 329 RESETHUB                                                         */
   SAADC_IRQn                             = 386,      /*!< 386 SAADC                                                            */
   COMP_LPCOMP_IRQn                       = 387,      /*!< 387 COMP_LPCOMP                                                      */
   TEMP_IRQn                              = 388,      /*!< 388 TEMP                                                             */
@@ -111,7 +99,6 @@ typedef enum {
   PDM_IRQn                               = 403,      /*!< 403 PDM                                                              */
   QDEC130_IRQn                           = 404,      /*!< 404 QDEC130                                                          */
   QDEC131_IRQn                           = 405,      /*!< 405 QDEC131                                                          */
-  SIMIF_IRQn                             = 406,      /*!< 406 SIMIF                                                            */
   I2S131_IRQn                            = 407,      /*!< 407 I2S131                                                           */
   TIMER130_IRQn                          = 418,      /*!< 418 TIMER130                                                         */
   TIMER131_IRQn                          = 419,      /*!< 419 TIMER131                                                         */
@@ -135,6 +122,95 @@ typedef enum {
   SERIAL7_IRQn                           = 470,      /*!< 470 SERIAL7                                                          */
 } IRQn_Type;
 
+/* ==================================================== Interrupt Aliases ==================================================== */
+#define SPIS120_IRQn                  SPIS120_UARTE120_IRQn
+#define SPIS120_IRQHandler            SPIS120_UARTE120_IRQHandler
+#define UARTE120_IRQn                 SPIS120_UARTE120_IRQn
+#define UARTE120_IRQHandler           SPIS120_UARTE120_IRQHandler
+#define COMP_IRQn                     COMP_LPCOMP_IRQn
+#define COMP_IRQHandler               COMP_LPCOMP_IRQHandler
+#define LPCOMP_IRQn                   COMP_LPCOMP_IRQn
+#define LPCOMP_IRQHandler             COMP_LPCOMP_IRQHandler
+#define SPIM130_IRQn                  SERIAL0_IRQn
+#define SPIM130_IRQHandler            SERIAL0_IRQHandler
+#define SPIS130_IRQn                  SERIAL0_IRQn
+#define SPIS130_IRQHandler            SERIAL0_IRQHandler
+#define TWIM130_IRQn                  SERIAL0_IRQn
+#define TWIM130_IRQHandler            SERIAL0_IRQHandler
+#define TWIS130_IRQn                  SERIAL0_IRQn
+#define TWIS130_IRQHandler            SERIAL0_IRQHandler
+#define UARTE130_IRQn                 SERIAL0_IRQn
+#define UARTE130_IRQHandler           SERIAL0_IRQHandler
+#define SPIM131_IRQn                  SERIAL1_IRQn
+#define SPIM131_IRQHandler            SERIAL1_IRQHandler
+#define SPIS131_IRQn                  SERIAL1_IRQn
+#define SPIS131_IRQHandler            SERIAL1_IRQHandler
+#define TWIM131_IRQn                  SERIAL1_IRQn
+#define TWIM131_IRQHandler            SERIAL1_IRQHandler
+#define TWIS131_IRQn                  SERIAL1_IRQn
+#define TWIS131_IRQHandler            SERIAL1_IRQHandler
+#define UARTE131_IRQn                 SERIAL1_IRQn
+#define UARTE131_IRQHandler           SERIAL1_IRQHandler
+#define SPIM132_IRQn                  SERIAL2_IRQn
+#define SPIM132_IRQHandler            SERIAL2_IRQHandler
+#define SPIS132_IRQn                  SERIAL2_IRQn
+#define SPIS132_IRQHandler            SERIAL2_IRQHandler
+#define TWIM132_IRQn                  SERIAL2_IRQn
+#define TWIM132_IRQHandler            SERIAL2_IRQHandler
+#define TWIS132_IRQn                  SERIAL2_IRQn
+#define TWIS132_IRQHandler            SERIAL2_IRQHandler
+#define UARTE132_IRQn                 SERIAL2_IRQn
+#define UARTE132_IRQHandler           SERIAL2_IRQHandler
+#define SPIM133_IRQn                  SERIAL3_IRQn
+#define SPIM133_IRQHandler            SERIAL3_IRQHandler
+#define SPIS133_IRQn                  SERIAL3_IRQn
+#define SPIS133_IRQHandler            SERIAL3_IRQHandler
+#define TWIM133_IRQn                  SERIAL3_IRQn
+#define TWIM133_IRQHandler            SERIAL3_IRQHandler
+#define TWIS133_IRQn                  SERIAL3_IRQn
+#define TWIS133_IRQHandler            SERIAL3_IRQHandler
+#define UARTE133_IRQn                 SERIAL3_IRQn
+#define UARTE133_IRQHandler           SERIAL3_IRQHandler
+#define SPIM134_IRQn                  SERIAL4_IRQn
+#define SPIM134_IRQHandler            SERIAL4_IRQHandler
+#define SPIS134_IRQn                  SERIAL4_IRQn
+#define SPIS134_IRQHandler            SERIAL4_IRQHandler
+#define TWIM134_IRQn                  SERIAL4_IRQn
+#define TWIM134_IRQHandler            SERIAL4_IRQHandler
+#define TWIS134_IRQn                  SERIAL4_IRQn
+#define TWIS134_IRQHandler            SERIAL4_IRQHandler
+#define UARTE134_IRQn                 SERIAL4_IRQn
+#define UARTE134_IRQHandler           SERIAL4_IRQHandler
+#define SPIM135_IRQn                  SERIAL5_IRQn
+#define SPIM135_IRQHandler            SERIAL5_IRQHandler
+#define SPIS135_IRQn                  SERIAL5_IRQn
+#define SPIS135_IRQHandler            SERIAL5_IRQHandler
+#define TWIM135_IRQn                  SERIAL5_IRQn
+#define TWIM135_IRQHandler            SERIAL5_IRQHandler
+#define TWIS135_IRQn                  SERIAL5_IRQn
+#define TWIS135_IRQHandler            SERIAL5_IRQHandler
+#define UARTE135_IRQn                 SERIAL5_IRQn
+#define UARTE135_IRQHandler           SERIAL5_IRQHandler
+#define SPIM136_IRQn                  SERIAL6_IRQn
+#define SPIM136_IRQHandler            SERIAL6_IRQHandler
+#define SPIS136_IRQn                  SERIAL6_IRQn
+#define SPIS136_IRQHandler            SERIAL6_IRQHandler
+#define TWIM136_IRQn                  SERIAL6_IRQn
+#define TWIM136_IRQHandler            SERIAL6_IRQHandler
+#define TWIS136_IRQn                  SERIAL6_IRQn
+#define TWIS136_IRQHandler            SERIAL6_IRQHandler
+#define UARTE136_IRQn                 SERIAL6_IRQn
+#define UARTE136_IRQHandler           SERIAL6_IRQHandler
+#define SPIM137_IRQn                  SERIAL7_IRQn
+#define SPIM137_IRQHandler            SERIAL7_IRQHandler
+#define SPIS137_IRQn                  SERIAL7_IRQn
+#define SPIS137_IRQHandler            SERIAL7_IRQHandler
+#define TWIM137_IRQn                  SERIAL7_IRQn
+#define TWIM137_IRQHandler            SERIAL7_IRQHandler
+#define TWIS137_IRQn                  SERIAL7_IRQn
+#define TWIS137_IRQHandler            SERIAL7_IRQHandler
+#define UARTE137_IRQn                 SERIAL7_IRQn
+#define UARTE137_IRQHandler           SERIAL7_IRQHandler
 
 /* =========================================================================================================================== */
 /* ================                           Processor and Core Peripheral Section                           ================ */
@@ -142,6 +218,9 @@ typedef enum {
 
 /* ====================== Configuration of the Nordic Semiconductor VPR Processor and Core Peripherals ======================= */
 #define __VPR_REV                    0.7             /*!< VPR Core Revision                                                    */
+#define __VPR_REV_MAJOR                0             /*!< VPR Core Major Revision                                              */
+#define __VPR_REV_MINOR                7             /*!< VPR Core Minor Revision                                              */
+#define __VPR_REV_PATCH                0             /*!< VPR Core Patch Revision                                              */
 #define __DSP_PRESENT                  0             /*!< DSP present or not                                                   */
 #define __CLIC_PRIO_BITS               3             /*!< Number of Bits used for Priority Levels                              */
 #define __MTVT_PRESENT                 1             /*!< CPU supports alternate Vector Table address                          */
@@ -150,8 +229,20 @@ typedef enum {
 #define __FPU_DP                       0             /*!< Double Precision FPU                                                 */
 #define __INTERRUPTS_MAX             480             /*!< Size of interrupt vector table                                       */
 
+#define NRF_VPR               NRF_VPR130             /*!< VPR instance name                                                    */
 #include "core_vpr.h"                                /*!< Nordic Semiconductor VPR processor and core peripherals              */
 #include "system_nrf.h"                              /*!< nrf54h20_enga_ppr System Library                                     */
+
+#endif                                               /*!< NRF_PPR                                                              */
+
+
+#ifdef NRF_PPR
+
+  #define NRF_DOMAIN                    NRF_DOMAIN_GLOBALSLOW
+  #define NRF_PROCESSOR                 NRF_PROCESSOR_PPR
+  #ifndef NRF_OWNER
+    #define NRF_OWNER                   NRF_OWNER_APPLICATION
+  #endif
 
 #endif                                               /*!< NRF_PPR                                                              */
 
@@ -205,14 +296,18 @@ typedef enum {
   #define NRF_PPR_VPRCLIC                         NRF_PPR_VPRCLIC_NS
 #else                                                /*!< Remap NRF_X_S instances to NRF_X symbol for ease of use.             */
   #define NRF_PPR_VPRCLIC                         NRF_PPR_VPRCLIC_S
-#endif                                               /*!<  NRF_TRUSTZONE_NONSECURE                                             */
+#endif                                               /*!< NRF_TRUSTZONE_NONSECURE                                              */
 
 /* =========================================================================================================================== */
 /* ================                                  Local Domain Remapping                                  ================ */
 /* =========================================================================================================================== */
 
-#ifdef NRF_PPR                                       /*!< Remap NRF_DOMAIN instances to NRF_X symbol for ease of use.          */
-  #define NRF_VPRCLIC                             NRF_PPR_VPRCLIC
+#ifdef NRF_PPR                                       /*!< Remap NRF_DOMAIN_X instances to NRF_X symbol for ease of use.        */
+  #ifdef NRF_TRUSTZONE_NONSECURE                     /*!< Remap only nonsecure instances.                                      */
+    #define NRF_VPRCLIC                           NRF_PPR_VPRCLIC
+  #else                                              /*!< Remap all instances.                                                 */
+    #define NRF_VPRCLIC                           NRF_PPR_VPRCLIC
+  #endif                                             /*!< NRF_TRUSTZONE_NONSECURE                                              */
 #endif                                               /*!< NRF_PPR                                                              */
 
 /* ========================================== End of section using anonymous unions ========================================== */
