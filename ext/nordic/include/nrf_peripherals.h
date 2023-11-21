@@ -1,6 +1,8 @@
 /*
 
-Copyright (c) 2010 - 2020, Nordic Semiconductor ASA All rights reserved.
+Copyright (c) 2010 - 2023, Nordic Semiconductor ASA All rights reserved.
+
+SPDX-License-Identifier: BSD-3-Clause
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -35,43 +37,50 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /*lint ++flb "Enter library region */
 
-#if defined(_WIN32)
-    /* Do not include nrf specific files when building for PC host */
-#elif defined(__unix)
-    /* Do not include nrf specific files when building for PC host */
-#elif defined(__APPLE__)
-    /* Do not include nrf specific files when building for PC host */
+#if defined(NRF51)
+    #include "nrf51_peripherals.h"
+
+#elif defined(NRF52805_XXAA)
+    #include "nrf52805_peripherals.h"
+#elif defined(NRF52810_XXAA)
+    #include "nrf52810_peripherals.h"
+#elif defined(NRF52811_XXAA)
+    #include "nrf52811_peripherals.h"
+#elif defined(NRF52820_XXAA)
+    #include "nrf52820_peripherals.h"
+#elif defined(NRF52832_XXAA) || defined(NRF52832_XXAB)
+    #include "nrf52832_peripherals.h"
+#elif defined(NRF52833_XXAA)
+    #include "nrf52833_peripherals.h"
+#elif defined(NRF52840_XXAA)
+    #include "nrf52840_peripherals.h"
+
+#elif defined (NRF5340_XXAA_APPLICATION)
+    #include "nrf5340_application_peripherals.h"
+#elif defined (NRF5340_XXAA_NETWORK)
+    #include "nrf5340_network_peripherals.h"
+
+#elif defined (NRF54L15_ENGA_XXAA)
+    #include "nrf54l15_enga_peripherals.h"
+
+#elif defined (NRF54H20_XXAA)
+    #include "nrf54h20_peripherals.h"
+#elif defined (NRF54H20_ENGA_XXAA)
+    #include "nrf54h20_enga_peripherals.h"
+
+#elif defined (NRF7140_XXAA)
+    #include "nrf7140_peripherals.h"
+
+#elif defined(NRF9120_XXAA)
+    #include "nrf9120_peripherals.h"
+#elif defined(NRF9160_XXAA)
+    #include "nrf9160_peripherals.h"
+
+#elif defined (NRF9230_XXAA)
+    #include "nrf9230_peripherals.h"
+
 #else
-
-    #if defined(NRF51)
-        #include "nrf51_peripherals.h"
-
-    #elif defined (NRF52805_XXAA)
-        #include "nrf52805_peripherals.h"
-    #elif defined(NRF52810_XXAA)
-        #include "nrf52810_peripherals.h"
-    #elif defined(NRF52811_XXAA)
-        #include "nrf52811_peripherals.h"        
-    #elif defined(NRF52820_XXAA)
-        #include "nrf52820_peripherals.h"        
-    #elif defined(NRF52832_XXAA) || defined(NRF52832_XXAB)
-        #include "nrf52832_peripherals.h"
-    #elif defined (NRF52833_XXAA)
-        #include "nrf52833_peripherals.h"
-    #elif defined(NRF52840_XXAA)
-        #include "nrf52840_peripherals.h"
-    
-    #elif defined (NRF5340_XXAA_APPLICATION)
-        #include "nrf5340_application_peripherals.h"      
-    #elif defined (NRF5340_XXAA_NETWORK)
-        #include "nrf5340_network_peripherals.h"
-        
-    #elif defined(NRF9160_XXAA)
-        #include "nrf9160_peripherals.h"
-        
-    #else
-        #error "Device must be defined. See nrf.h."
-    #endif
+    #error "Device must be defined. See nrf_peripherals.h."
 #endif
 
 /*lint --flb "Leave library region" */
