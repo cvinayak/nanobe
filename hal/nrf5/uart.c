@@ -20,43 +20,109 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "util/misc.h"
 #include "util/util.h"
 
+#if defined(NRF51_SERIES) || defined(NRF52832_XXAB)
+#define NRF_UARTX                          NRF_UART0
+#define UARTX_IRQn                         UART0_IRQn
+#define UARTX_ENABLE_ENABLE_Enabled        UART_ENABLE_ENABLE_Enabled
+#define UARTX_BAUDRATE_BAUDRATE_Baud115200 UART_BAUDRATE_BAUDRATE_Baud115200
+#define UARTX_CONFIG_HWFC_Pos              UART_CONFIG_HWFC_Pos
+#define UARTX_CONFIG_HWFC_Msk              UART_CONFIG_HWFC_Msk
+#define UARTX_INTENSET_RXDRDY_Msk          UART_INTENSET_RXDRDY_Msk
+#define UARTX_INTENSET_TXDRDY_Msk          UART_INTENSET_TXDRDY_Msk
+#define UARTX_INTENSET_ERROR_Msk           UART_INTENSET_ERROR_Msk
+#elif defined(NRF52840_XXAA)
+#define NRF_UARTX                          NRF_UARTE0
+#define UARTX_IRQn                         UART0_IRQn
+#define PSELTXD                            PSEL.TXD
+#define PSELRXD                            PSEL.RXD
+#define PSELRTS                            PSEL.RTS
+#define PSELCTS                            PSEL.CTS
+#define UARTX_ENABLE_ENABLE_Enabled        UARTE_ENABLE_ENABLE_Enabled
+#define UARTX_BAUDRATE_BAUDRATE_Baud115200 UARTE_BAUDRATE_BAUDRATE_Baud115200
+#define UARTX_CONFIG_HWFC_Pos              UARTE_CONFIG_HWFC_Pos
+#define UARTX_CONFIG_HWFC_Msk              UARTE_CONFIG_HWFC_Msk
+#define UARTX_INTENSET_RXDRDY_Msk          UARTE_INTENSET_RXDRDY_Msk
+#define UARTX_INTENSET_TXDRDY_Msk          UARTE_INTENSET_TXDRDY_Msk
+#define UARTX_INTENSET_ERROR_Msk           UARTE_INTENSET_ERROR_Msk
+#elif defined(NRF5340_XXAA_APPLICATION) || defined(NRF5340_XXAA_NETWORK)
+#if defined(NRF5340_XXAA_APPLICATION)
+#define NRF_UARTX                          NRF_UARTE0_S
+#else
+#define NRF_UARTX                          NRF_UARTE0_NS
+#endif
+#define UARTX_IRQn                         UART0_IRQn
+#define PSELTXD                            PSEL.TXD
+#define PSELRXD                            PSEL.RXD
+#define PSELRTS                            PSEL.RTS
+#define PSELCTS                            PSEL.CTS
+#define UARTX_ENABLE_ENABLE_Enabled        UARTE_ENABLE_ENABLE_Enabled
+#define UARTX_BAUDRATE_BAUDRATE_Baud115200 UARTE_BAUDRATE_BAUDRATE_Baud115200
+#define UARTX_CONFIG_HWFC_Pos              UARTE_CONFIG_HWFC_Pos
+#define UARTX_CONFIG_HWFC_Msk              UARTE_CONFIG_HWFC_Msk
+#define UARTX_INTENSET_RXDRDY_Msk          UARTE_INTENSET_RXDRDY_Msk
+#define UARTX_INTENSET_TXDRDY_Msk          UARTE_INTENSET_TXDRDY_Msk
+#define UARTX_INTENSET_ERROR_Msk           UARTE_INTENSET_ERROR_Msk
+#define UART0_IRQn                         SPIM0_SPIS0_TWIM0_TWIS0_UARTE0_IRQn
+#endif
+
 #define UART_TX_BUFFER_MAX  (1)
 #define UART_RX_BUFFER_MAX  (1)
 
 #define UART_TX_BUFFER_SIZE (UART_TX_BUFFER_MAX + 1)
 #define UART_RX_BUFFER_SIZE (UART_RX_BUFFER_MAX + 1)
 
-static uint8_t tx[UART_TX_BUFFER_SIZE];
+static uint32_t tx[UART_TX_BUFFER_SIZE];
 static uint8_t volatile tx_first;
 static uint8_t volatile tx_last;
-static uint8_t rx[UART_RX_BUFFER_SIZE];
+static uint32_t rx[UART_RX_BUFFER_SIZE];
 static uint8_t volatile rx_first;
 static uint8_t volatile rx_last;
 
-void uart_init(uint8_t pin, uint8_t hwfc)
+uint32_t uart_init(uint8_t pin_txd, uint8_t pin_rxd,
+		   uint8_t pin_rts, uint8_t pin_cts,
+		   uint8_t hwfc)
 {
-#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
-	NRF_UART0->ENABLE = UART_ENABLE_ENABLE_Enabled;
-	NRF_UART0->BAUDRATE = UART_BAUDRATE_BAUDRATE_Baud115200;
-	NRF_UART0->CONFIG = (hwfc) ? UART_CONFIG_HWFC_Msk: 0;
-	NRF_UART0->ERRORSRC = 0x0F;
-	NRF_UART0->PSELRTS = pin++;
-	NRF_UART0->PSELTXD = pin++;
-	NRF_UART0->PSELCTS = pin++;
-	NRF_UART0->PSELRXD = pin++;
-	NRF_UART0->EVENTS_TXDRDY = 0;
-	NRF_UART0->EVENTS_RXDRDY = 0;
-	NRF_UART0->EVENTS_ERROR = 0;
-	NRF_UART0->INTENSET = (UART_INTENSET_RXDRDY_Msk |
-			       UART_INTENSET_TXDRDY_Msk |
-			       UART_INTENSET_ERROR_Msk);
 
-	NRF_UART0->TASKS_STARTTX = 1;
-	NRF_UART0->TASKS_STARTRX = 1;
+	NRF_UARTX->CONFIG =
+		((hwfc << UARTX_CONFIG_HWFC_Pos) &
+		 UARTX_CONFIG_HWFC_Msk) |
+		0U;
+	NRF_UARTX->BAUDRATE = UARTX_BAUDRATE_BAUDRATE_Baud115200;
+	NRF_UARTX->PSELTXD = pin_txd;
+	NRF_UARTX->PSELRXD = pin_rxd;
+	if (hwfc) {
+		NRF_UARTX->PSELRTS = pin_rts;
+		NRF_UARTX->PSELCTS = pin_cts;
+	}
+	NRF_UARTX->ENABLE = UARTX_ENABLE_ENABLE_Enabled;
+	NRF_UARTX->ERRORSRC = 0x0F;
+	NRF_UARTX->EVENTS_TXDRDY = 0;
+	NRF_UARTX->EVENTS_RXDRDY = 0;
+	NRF_UARTX->EVENTS_ERROR = 0;
+	NRF_UARTX->INTENSET = (UARTX_INTENSET_RXDRDY_Msk |
+			       UARTX_INTENSET_TXDRDY_Msk |
+			       UARTX_INTENSET_ERROR_Msk);
+
+#if defined(NRF52840_XXAA)
+	NRF_UARTX->SHORTS = UARTE_SHORTS_ENDRX_STOPRX_Msk;
+
+	NRF_UARTX->RXD.MAXCNT = UART_RX_BUFFER_MAX;
+	NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
+	NRF_UARTX->TASKS_STARTRX = 1;
+
+#elif defined(NRF5340_XXAA_APPLICATION) || defined(NRF5340_XXAA_NETWORK)
+	NRF_UARTX->SHORTS = UARTE_SHORTS_ENDRX_STOPRX_Msk;
+
+	NRF_UARTX->RXD.MAXCNT = UART_RX_BUFFER_MAX;
+	NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
+	NRF_UARTX->TASKS_STARTRX = 1;
+
 #else
-	ARG_UNUSED(pin);
-	ARG_UNUSED(hwfc);
+	NRF_UARTX->TASKS_STARTTX = 1;
+	NRF_UARTX->TASKS_STARTRX = 1;
 #endif
+
+	return UARTX_IRQn;
 }
 
 void uart_tx(uint8_t x)
@@ -79,13 +145,21 @@ void uart_tx(uint8_t x)
 	prev_last = tx_last;
 	tx_last = last;
 
-#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
 	if (tx_first == prev_last) {
-		NRF_UART0->TXD = tx[tx_first];
-	}
+#if defined(NRF52840_XXAA)
+		NRF_UARTX->TXD.MAXCNT = 1;
+		NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
+		NRF_UARTX->TASKS_STARTTX = 1;
+
+#elif defined(NRF5340_XXAA_APPLICATION) || defined(NRF5340_XXAA_NETWORK)
+		NRF_UARTX->TXD.MAXCNT = 1;
+		NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
+		NRF_UARTX->TASKS_STARTTX = 1;
+
 #else
-	ARG_UNUSED(prev_last);
+		NRF_UARTX->TXD = tx[tx_first];
 #endif
+	}
 }
 
 uint32_t uart_tx_done(void)
@@ -135,11 +209,9 @@ uint32_t uart_rx(uint8_t *p_x)
 	}
 	rx_first = first;
 
-#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
-	if (NRF_UART0->EVENTS_RXDRDY) {
-		NRF_UART0->INTENSET = UART_INTENSET_RXDRDY_Msk;
+	if (NRF_UARTX->EVENTS_RXDRDY) {
+		NRF_UARTX->INTENSET = UARTX_INTENSET_RXDRDY_Msk;
 	}
-#endif
 
 	return(1);
 }
@@ -158,11 +230,10 @@ void isr_uart0(void *param)
 	/* TODO: use param as s/w instance of h/w */
 	(void)param;
 
-#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
-	if (NRF_UART0->EVENTS_TXDRDY) {
+	if (NRF_UARTX->EVENTS_TXDRDY) {
 		uint8_t first;
 
-		NRF_UART0->EVENTS_TXDRDY = 0;
+		NRF_UARTX->EVENTS_TXDRDY = 0;
 
 		first = tx_first + 1;
 		if (first == UART_TX_BUFFER_SIZE) {
@@ -171,12 +242,24 @@ void isr_uart0(void *param)
 		tx_first = first;
 
 		if (tx_first != tx_last) {
-			NRF_UART0->TXD = tx[tx_first];
+#if defined(NRF52840_XXAA)
+			NRF_UARTX->TXD.MAXCNT = 1;
+			NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
+			NRF_UARTX->TASKS_STARTTX = 1;
+
+#elif defined(NRF5340_XXAA_APPLICATION) || defined(NRF5340_XXAA_NETWORK)
+			NRF_UARTX->TXD.MAXCNT = 1;
+			NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
+			NRF_UARTX->TASKS_STARTTX = 1;
+
+#else
+			NRF_UARTX->TXD = tx[tx_first];
+#endif
 		}
 	}
 
-	while ((NRF_UART0->INTENSET & UART_INTENSET_RXDRDY_Msk) &&
-	       NRF_UART0->EVENTS_RXDRDY) {
+	while ((NRF_UARTX->INTENSET & UARTX_INTENSET_RXDRDY_Msk) &&
+	       NRF_UARTX->EVENTS_RXDRDY) {
 		uint8_t last;
 
 		last = rx_last + 1;
@@ -185,19 +268,35 @@ void isr_uart0(void *param)
 		}
 
 		if (last == rx_first) {
-			NRF_UART0->INTENCLR = UART_INTENSET_RXDRDY_Msk;
+			NRF_UARTX->INTENCLR = UARTX_INTENSET_RXDRDY_Msk;
 
 			break;
 		}
 
-		NRF_UART0->EVENTS_RXDRDY = 0;
-		rx[rx_last] = NRF_UART0->RXD;
+		NRF_UARTX->EVENTS_RXDRDY = 0;
+
+#if defined(NRF52840_XXAA)
 		rx_last = last;
+
+		NRF_UARTX->RXD.MAXCNT = UART_RX_BUFFER_MAX;
+		NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
+		NRF_UARTX->TASKS_STARTRX = 1;
+
+#elif defined(NRF5340_XXAA_APPLICATION) || defined(NRF5340_XXAA_NETWORK)
+		rx_last = last;
+
+		NRF_UARTX->RXD.MAXCNT = UART_RX_BUFFER_MAX;
+		NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
+		NRF_UARTX->TASKS_STARTRX = 1;
+
+#else
+		rx[rx_last] = NRF_UARTX->RXD;
+		rx_last = last;
+#endif
 	}
 
-	ASSERT(NRF_UART0->EVENTS_ERROR == 0);
-	if (NRF_UART0->EVENTS_ERROR) {
-		NRF_UART0->EVENTS_ERROR = 0;
+	ASSERT(NRF_UARTX->EVENTS_ERROR == 0);
+	if (NRF_UARTX->EVENTS_ERROR) {
+		NRF_UARTX->EVENTS_ERROR = 0;
 	}
-#endif
 }

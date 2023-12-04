@@ -15,7 +15,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef _UART_H_
 #define _UART_H_
 
-void uart_init(uint8_t pin, uint8_t hwfc);
+uint32_t uart_init(uint8_t pin_txd, uint8_t pin_rxd,
+		   uint8_t pin_rts, uint8_t pin_cts,
+		   uint8_t hwfc);
 void uart_tx(uint8_t x);
 uint32_t uart_tx_done(void);
 void uart_tx_str(char *s);

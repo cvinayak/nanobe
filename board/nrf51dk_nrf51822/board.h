@@ -12,4 +12,9 @@
 
 #define LED_BLINK (LED1)
 
+#define UART_PIN_TXD 9
+#define UART_PIN_RXD 11
+#define UART_PIN_RTS 8
+#define UART_PIN_CTS 10
+
 #endif
