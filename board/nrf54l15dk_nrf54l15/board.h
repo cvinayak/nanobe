@@ -23,4 +23,17 @@
 #define LED_BLINK_ON 1      /* On value */
 #endif
 
+#if defined(UART) && !defined(UART1)
+#define UART_PIN_TXD 0
+#define UART_PIN_RXD 1
+#define UART_PIN_RTS 2
+#define UART_PIN_CTS 3
+
+#elif defined(UART1)
+#define UART_PIN_TXD 36
+#define UART_PIN_RXD 37
+#define UART_PIN_RTS 38
+#define UART_PIN_CTS 39
+#endif
+
 #endif

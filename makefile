@@ -135,6 +135,7 @@ else ifeq ($(SOC), nrf54l15_cpuapp)
 
 	SRCS_HAL_NRF5 = \
 		hal/nrf5/gpio.c \
+		hal/nrf5/uart.c \
 
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
