@@ -110,11 +110,20 @@ Assert handler
 #include "hal/uart.h"
 #endif
 
-#define ASSERT_STACK_FRAME (0x0003FC00)
+#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
+#define ASSERT_STACK_FRAME (0x0001F000)
+#elif defined(NRF5340_XXAA_APPLICATION)
+#define ASSERT_STACK_FRAME (0x0001F000)
+#define NRF_NVMC NRF_NVMC_S
+#define NRF_GPIO NRF_P0_S
+#elif defined(NRF5340_XXAA_NETWORK)
+#define ASSERT_STACK_FRAME (0x0101F000)
+#define NRF_NVMC NRF_NVMC_NS
+#define NRF_GPIO NRF_P0_NS
+#endif
 
 void exc_hardfault(uint32_t sp)
 {
-#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
 	uint32_t *p_flash = (uint32_t *) ASSERT_STACK_FRAME;
 	uint32_t count = 9; /* Cortex-M0 stack frame size = 8 32-bit words, 
 			     * plus SP itself to store.
@@ -129,8 +138,16 @@ void exc_hardfault(uint32_t sp)
 	sp -= 4;
 
 	/* erase flash page */
+#if defined(NRF51_SERIES) || defined(NRF52_SERIES)
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Een;
 	NRF_NVMC->ERASEPAGE = (uint32_t) p_flash;
+#elif defined(NRF5340_XXAA_APPLICATION)
+	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_PEen;
+	*p_flash = 0xFFFFFFFF;
+#elif defined(NRF5340_XXAA_NETWORK)
+	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_PEen;
+	*p_flash = 0xFFFFFFFF;
+#endif
 	while (NRF_NVMC->READY == 0) {
 	}
 
@@ -147,9 +164,6 @@ void exc_hardfault(uint32_t sp)
 	while (NRF_NVMC->READY == 0) {
 	}
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
-#else
-	ARG_UNUSED(sp);
-#endif
 
 	/* low power hang! */
 	while(1)
