@@ -377,7 +377,6 @@ Assert handler
 
 void exc_hardfault(uint32_t sp)
 {
-#if !defined(NRF54L15_ENGA_XXAA)
 	uint32_t *p_flash = (uint32_t *) ASSERT_STACK_FRAME;
 	uint32_t count = 9; /* Cortex-M0 stack frame size = 8 32-bit words, 
 			     * plus SP itself to store.
@@ -403,6 +402,7 @@ void exc_hardfault(uint32_t sp)
 	*p_flash = 0xFFFFFFFF;
 #endif
 
+#if !defined(NRF54L15_ENGA_XXAA)
 	while (NRF_NVMC->READY == 0) {
 	}
 
@@ -420,9 +420,7 @@ void exc_hardfault(uint32_t sp)
 	}
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
 
-#else
-	ARG_UNUSED(sp);
-
+#else /* NRF54L15_ENGA_XXAA */
 	/* turn LEDs on */
 	NRF_GPIO->DIRSET = 0xFFFFFFFF;
 	NRF_GPIO->OUTSET = 0xFFFFFFFF;
@@ -430,7 +428,27 @@ void exc_hardfault(uint32_t sp)
 	/* turn LEDs on */
 	NRF_P1_S->DIRSET = 0xFFFFFFFF;
 	NRF_P1_S->OUTSET = 0xFFFFFFFF;
-#endif
+
+	/* enable write to flash */
+	NRF_RRAMC_S->CONFIG = (RRAMC_CONFIG_WEN_Enabled <<
+			       RRAMC_CONFIG_WEN_Pos) &&
+			      RRAMC_CONFIG_WEN_Msk;
+	while (NRF_RRAMC_S->READY == 0U);
+
+	/* write to flash */
+	while (count--)	{
+		*p_flash++ = *((uint32_t *)sp);
+		sp += 4;
+		while (NRF_RRAMC_S->READY == 0U);
+	}
+	*p_flash = 0U;
+	while (NRF_RRAMC_S->READY == 0U);
+
+	/* disable write to flash */
+	NRF_RRAMC_S->CONFIG = (RRAMC_CONFIG_WEN_Disabled <<
+			       RRAMC_CONFIG_WEN_Pos) &&
+			      RRAMC_CONFIG_WEN_Msk;
+#endif /* NRF54L15_ENGA_XXAA */
 
 	/* low power hang! */
 	while(1)
@@ -442,7 +460,6 @@ void exc_hardfault(uint32_t sp)
 #if UART
 void assert_print(void)
 {
-#if !defined(NRF54L15_ENGA_XXAA)
 	uint32_t sp = ASSERT_STACK_FRAME;
 	char buf[0xFF];
 	char *p_buf = buf;
@@ -466,6 +483,5 @@ void assert_print(void)
 	while (*p_buf) {
 		uart_tx(*p_buf++);
 	}
-#endif
 }
 #endif
