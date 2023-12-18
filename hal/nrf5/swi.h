@@ -44,7 +44,27 @@
 #error Unknown NRF5340 CPU.
 #endif /* !NRF_NETWORK */
 
-#endif /* NRF53_SERIES */
+/* nRF54 Series IRQ mapping */
+#elif defined(NRF54L15_ENGA_XXAA)
+
+#define HAL_SWI_RADIO_IRQ  SWI02_IRQn
+
+#if defined(CONFIG_GRTC)
+#define HAL_SWI_WORKER_IRQ GRTC_0_IRQn
+#define RTC0_IRQn          GRTC_0_IRQn
+#else
+#define HAL_SWI_WORKER_IRQ RTC10_IRQn
+#define RTC0_IRQn          RTC10_IRQn
+#endif
+
+#if !defined(CONFIG_BT_CTLR_LOW_LAT) && \
+	(CONFIG_BT_CTLR_ULL_HIGH_PRIO == CONFIG_BT_CTLR_ULL_LOW_PRIO)
+#define HAL_SWI_JOB_IRQ    HAL_SWI_WORKER_IRQ
+#else
+#define HAL_SWI_JOB_IRQ    SWI03_IRQn
+#endif
+
+#endif
 
 static inline void hal_swi_init(void)
 {

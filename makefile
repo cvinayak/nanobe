@@ -18,6 +18,7 @@ else ifeq ($(BOARD), nrf54l15dk_nrf54l15_cpuapp)
 
 	CFLAGS = \
 		-DCONFIG_BOARD_NRF54L15DK_NRF54L15_CPUAPP \
+		-DCONFIG_GRTC \
 
 	INCLUDES = \
 		-I board/nrf54l15dk_nrf54l15 \
@@ -134,7 +135,12 @@ else ifeq ($(SOC), nrf54l15_cpuapp)
 		soc/nrf5/soc_c.c \
 
 	SRCS_HAL_NRF5 = \
+		hal/nrf5/ticker.c \
+		hal/nrf5/cntr.c \
+		hal/nrf5/clock.c \
+		hal/nrf5/mayfly.c \
 		hal/nrf5/gpio.c \
+		hal/nrf5/timer.c \
 		hal/nrf5/uart.c \
 
 	ASMS_SOC = $(ASMS_SOC_NRF5)
