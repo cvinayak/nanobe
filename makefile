@@ -112,6 +112,7 @@ else ifeq ($(SOC), nrf5340_cpuapp)
 	CFLAGS += \
 		-mcpu=cortex-m33 \
 		-mthumb \
+		-DNUM_IRQS=69 \
 		-DNRF5340_XXAA_APPLICATION \
 		-DNRF5340_CPUNET_ON \
 
@@ -149,6 +150,7 @@ else ifeq ($(SOC), nrf5340_cpunet)
 	CFLAGS += \
 		-mcpu=cortex-m33+nodsp \
 		-mthumb \
+		-DNUM_IRQS=30 \
 		-DNRF5340_XXAA_NETWORK \
 
 	ASMS_SOC_NRF5 = \
@@ -180,6 +182,7 @@ else ifeq ($(SOC), nrf52840)
 	CFLAGS += \
 		-mcpu=cortex-m4 \
 		-mthumb \
+		-DNUM_IRQS=48 \
 		-DNRF52840_XXAA \
 
 	ASMS_SOC_NRF5 = \
@@ -216,6 +219,7 @@ else ifeq ($(SOC), nrf52832)
 	CFLAGS += \
 		-mcpu=cortex-m4 \
 		-mthumb \
+		-DNUM_IRQS=37 \
 		-DNRF52832_XXAB \
 
 	ASMS_SOC_NRF5 = \
@@ -252,6 +256,7 @@ else ifeq ($(SOC), nrf51822)
 	CFLAGS += \
 		-mcpu=cortex-m0 \
 		-mthumb \
+		-DNUM_IRQS=32 \
 		-DNRF51_SERIES \
 		-DNRF51 \
 

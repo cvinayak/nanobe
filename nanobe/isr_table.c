@@ -19,7 +19,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "nanobe.h"
 
-#define NUM_IRQS 32
+#if !defined(NUM_IRQS)
+#error "Missing NUM_IRQS define."
+#endif
 
 extern void _isr_wrapper(void);
 
