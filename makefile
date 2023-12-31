@@ -3,70 +3,45 @@ export NANOBE_BASE
 
 ifeq ($(BOARD), HiFive1)
 	SOC = fe310
-	FLASH_START = 0x20000000
-	FLASH_SIZE  = 0x00020000
-	RAM_START   = 0x80000000
-	RAM_SIZE    = 0x00004000
+
+	ASFLAGS = \
+
+	CFLAGS = \
 
 	INCLUDES = \
 		-I board/HiFive1 \
 
 else ifeq ($(BOARD), nrf5340dk_nrf5340_cpuapp)
-	SOC = nrf5340
-	FLASH_START = 0x00000000
-	FLASH_SIZE  = 0x00100000
-	RAM_START   = 0x20000000
-	RAM_SIZE    = 0x00080000
+	SOC = nrf5340_cpuapp
 
 	ASFLAGS = \
-		-mcpu=cortex-m33 \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m33 \
-		-mthumb \
-		-DNRF5340_XXAA_APPLICATION \
-		-DNRF5340_CPUNET_ON \
-		-DDEBUG=1 \
 
 	INCLUDES = \
 		-I board/nrf5340dk_nrf5340 \
 
 else ifeq ($(BOARD), nrf5340dk_nrf5340_cpunet)
-	SOC = nrf5340
-	FLASH_START = 0x01000000
-	FLASH_SIZE  = 0x00040000
-	RAM_START   = 0x21000000
-	RAM_SIZE    = 0x00010000
+	SOC = nrf5340_cpunet
 
 	ASFLAGS = \
-		-mcpu=cortex-m33+nodsp \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m33+nodsp \
-		-mthumb \
-		-DNRF5340_XXAA_NETWORK \
-		-DDEBUG=1 \
 
 	INCLUDES = \
 		-I board/nrf5340dk_nrf5340 \
 
 else ifeq ($(BOARD), nrf52840dongle_nrf52840)
 	SOC = nrf52840
+
 	FLASH_START = 0x00001000
 	FLASH_SIZE  = 0x000ff000
 	RAM_START   = 0x20000008
 	RAM_SIZE    = 0x0003fff8
 
 	ASFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb \
-		-DNRF52840_XXAA \
 		-DDEBUG=1 \
 
 	INCLUDES = \
@@ -74,61 +49,35 @@ else ifeq ($(BOARD), nrf52840dongle_nrf52840)
 
 else ifeq ($(BOARD), nrf52840dk_nrf52840)
 	SOC = nrf52840
+
 	FLASH_START = 0x00000000
 	FLASH_SIZE  = 0x00100000
 	RAM_START   = 0x20000000
 	RAM_SIZE    = 0x00040000
 
 	ASFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb \
-		-DNRF52840_XXAA \
-		-DDEBUG=1 \
 
 	INCLUDES = \
 		-I board/nrf52840dk_nrf52840 \
 
 else ifeq ($(BOARD), nrf52dk_nrf52832)
 	SOC = nrf52832
-	FLASH_START = 0x00000000
-	FLASH_SIZE  = 0x00040000
-	RAM_START   = 0x20000000
-	RAM_SIZE    = 0x00008000
 
 	ASFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m4 \
-		-mthumb \
-		-DNRF52832_XXAB \
-		-DDEBUG=1 \
 
 	INCLUDES = \
 		-I board/nrf52dk_nrf52832 \
 
 else ifeq ($(BOARD), nrf51dk_nrf51822)
 	SOC = nrf51822
-	FLASH_START = 0x00000000
-	FLASH_SIZE  = 0x00020000
-	RAM_START   = 0x20000000
-	RAM_SIZE    = 0x00004000
 
 	ASFLAGS = \
-		-mcpu=cortex-m0 \
-		-mthumb
 
 	CFLAGS = \
-		-mcpu=cortex-m0 \
-		-mthumb \
-		-DNRF51 \
-		-DDEBUG=1 \
-		-DUART=8 \
 
 	INCLUDES = \
 		-I board/nrf51dk_nrf51822 \
@@ -137,13 +86,35 @@ endif
 
 ifeq ($(SOC), fe310)
 	ARCH = riscv
+
+	FLASH_START = 0x20000000
+	FLASH_SIZE  = 0x00020000
+	RAM_START   = 0x80000000
+	RAM_SIZE    = 0x00004000
+
 	SRCS_HAL_FE310 = \
 		hal/fe310/gpio.c \
 
 	SRCS_HAL = $(SRCS_HAL_FE310)
 
-else ifeq ($(SOC), nrf5340)
+else ifeq ($(SOC), nrf5340_cpuapp)
 	ARCH = arm
+
+	FLASH_START = 0x00000000
+	FLASH_SIZE  = 0x00100000
+	RAM_START   = 0x20000000
+	RAM_SIZE    = 0x00080000
+
+	ASFLAGS += \
+		-mcpu=cortex-m33 \
+		-mthumb
+
+	CFLAGS += \
+		-mcpu=cortex-m33 \
+		-mthumb \
+		-DNRF5340_XXAA_APPLICATION \
+		-DNRF5340_CPUNET_ON \
+
 	ASMS_SOC_NRF5 = \
 		soc/nrf5/soc.s \
 
@@ -158,9 +129,59 @@ else ifeq ($(SOC), nrf5340)
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
 	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
+
+else ifeq ($(SOC), nrf5340_cpunet)
+	ARCH = arm
+
+	FLASH_START = 0x01000000
+	FLASH_SIZE  = 0x00040000
+	RAM_START   = 0x21000000
+	RAM_SIZE    = 0x00010000
+
+	ASFLAGS += \
+		-mcpu=cortex-m33+nodsp \
+		-mthumb
+
+	CFLAGS += \
+		-mcpu=cortex-m33+nodsp \
+		-mthumb \
+		-DNRF5340_XXAA_NETWORK \
+
+	ASMS_SOC_NRF5 = \
+		soc/nrf5/soc.s \
+
+	SRCS_SOC_NRF5 = \
+		soc/nrf5/soc_c.c \
+
+	SRCS_HAL_NRF5 = \
+		hal/nrf5/gpio.c \
+		hal/nrf5/timer.c \
+		hal/nrf5/uart.c \
+
+	ASMS_SOC = $(ASMS_SOC_NRF5)
+	SRCS_SOC = $(SRCS_SOC_NRF5)
+	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
 
 else ifeq ($(SOC), nrf52840)
 	ARCH = arm
+
+	ASFLAGS += \
+		-mcpu=cortex-m4 \
+		-mthumb
+
+	CFLAGS += \
+		-mcpu=cortex-m4 \
+		-mthumb \
+		-DNRF52840_XXAA \
+
 	ASMS_SOC_NRF5 = \
 		soc/nrf5/soc.s \
 
@@ -175,9 +196,28 @@ else ifeq ($(SOC), nrf52840)
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
 	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
 
 else ifeq ($(SOC), nrf52832)
 	ARCH = arm
+
+	FLASH_START = 0x00000000
+	FLASH_SIZE  = 0x00040000
+	RAM_START   = 0x20000000
+	RAM_SIZE    = 0x00004000
+
+	ASFLAGS += \
+		-mcpu=cortex-m4 \
+		-mthumb
+
+	CFLAGS += \
+		-mcpu=cortex-m4 \
+		-mthumb \
+		-DNRF52832_XXAB \
+
 	ASMS_SOC_NRF5 = \
 		soc/nrf5/soc.s \
 
@@ -192,9 +232,29 @@ else ifeq ($(SOC), nrf52832)
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
 	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
 
 else ifeq ($(SOC), nrf51822)
 	ARCH = arm
+
+	FLASH_START = 0x00000000
+	FLASH_SIZE  = 0x00020000
+	RAM_START   = 0x20000000
+	RAM_SIZE    = 0x00004000
+
+	ASFLAGS += \
+		-mcpu=cortex-m0 \
+		-mthumb
+
+	CFLAGS += \
+		-mcpu=cortex-m0 \
+		-mthumb \
+		-DNRF51_SERIES \
+		-DNRF51 \
+
 	ASMS_SOC_NRF5 = \
 		soc/nrf5/soc.s \
 
@@ -209,6 +269,10 @@ else ifeq ($(SOC), nrf51822)
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
 	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
 
 endif
 
@@ -230,8 +294,6 @@ else ifeq ($(ARCH), arm)
   INCLUDES += \
 	-I ext/arm/cmsis/include \
 	-I arch/arm/cortex_m \
-
-  INCLUDES += \
 	-I . \
 
 endif
@@ -271,9 +333,6 @@ ifeq ($(ARCH), arm)
 	app/app_profile.c \
 
   INCLUDES += \
-	-I . \
-	-I ext/nordic/include \
-	-I soc/nrf5 \
 	-I nanobe \
 
   OBJS_APP_PROFILE = $(ASMS_APP_PROFILE:.s=.o) $(SRCS_APP_PROFILE:.c=.o)
@@ -282,7 +341,7 @@ ifeq ($(ARCH), arm)
   TARGETS += app/app_profile.elf
 endif
 
-all :
+all : $(TARGETS)
 
 app/app_metal.elf : $(OBJS_APP_METAL)
 

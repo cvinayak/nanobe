@@ -22,7 +22,7 @@ CFLAGS += \
 	-DVERSION=\"$(VERSION)\" \
 
 OBJS += $(SRCS:.c=.o) $(ASMS:.s=.o)
-DEPS += $(SRCS:.c=.d)
+DEPS += $(SRCS:.c=.d) $(ASMS:.s=.d)
 
 VERSION = $(shell git rev-parse --short HEAD)
 
@@ -38,13 +38,26 @@ info :
 
 $(TARGETS) :
 	$(CC) $(CFLAGS) -Wl,--gc-sections,--defsym=FLASH_ORIGIN=$(FLASH_START),--defsym=FLASH_LENGTH=$(FLASH_SIZE),--defsym=RAM_ORIGIN=$(RAM_START),--defsym=RAM_LENGTH=$(RAM_SIZE),--script=$(LDSCRIPT),-Map=$(basename $@).map -o $@ $^ -lgcc
-	$(OBJDUMP) -D $@ > $(basename $@).lst
+	$(OBJDUMP) $(OBJDUMP_FLAGS) -D -S $@ > $(basename $@).lst
 	$(OBJCOPY) -O ihex $@ $(basename $@).hex
 	$(OBJCOPY) -O binary $@ $(basename $@).bin
 	$(SIZE) $@
 
+%.d : %.s
+	@echo Dependencies for $<
+	$(AS) $(ASFLAGS) --MD $@ -o $(@:.d=.o) $<
+
+%.o : %.s
+	@echo Assembly for $<
+	$(AS) $(ASFLAGS) -o $@ $<
+
 %.d : %.c
+	@echo Dependencies for $<
 	$(CC) $(CFLAGS) -M -o $@ $<
+
+%.o : %.c
+	@echo Compilation for $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean :
 	$(RM) $(DEPS) $(OBJS) $(TARGETS) $(TARGETS:.elf=.map) $(TARGETS:.elf=.hex) $(TARGETS:.elf=.bin) $(TARGETS:.elf=.lst)

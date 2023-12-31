@@ -7,4 +7,6 @@ SIZE = arm-none-eabi-size
 
 LDSCRIPT = arch/arm/cortex_m/link.lds
 
-export AS CC LD OBJCOPY OBJDUMP SIZE LDSCRIPT
+OBJDUMP_FLAGS = -M force-thumb
+
+export AS CC LD OBJCOPY OBJDUMP SIZE LDSCRIPT OBJDUMP_FLAGS
