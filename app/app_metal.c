@@ -15,4 +15,6 @@ void * const main_stack_top = main_stack + sizeof(main_stack);
 int main(void)
 {
 	gpio_pin_out_config(LED_BLINK, 0);
+
+	return 0;
 }
