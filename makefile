@@ -11,6 +11,16 @@ ifeq ($(BOARD), HiFive1)
 	INCLUDES = \
 		-I board/HiFive1 \
 
+else ifeq ($(BOARD), nrf54l15dk_nrf54l15_cpuvpr)
+	SOC = nrf54l15_cpuvpr
+
+	ASFLAGS = \
+
+	CFLAGS = \
+
+	INCLUDES = \
+		-I board/nrf54l15dk_nrf54l15 \
+
 else ifeq ($(BOARD), nrf54l15dk_nrf54l15_cpuapp)
 	SOC = nrf54l15_cpuapp
 
@@ -117,13 +127,46 @@ ifeq ($(SOC), fe310)
 
 	SRCS_HAL = $(SRCS_HAL_FE310)
 
+else ifeq ($(SOC), nrf54l15_cpuvpr)
+	ARCH = riscv
+
+	FLASH_START = 0x00100000
+	FLASH_SIZE  = 0x00080000
+	RAM_START   = 0x20020000
+	RAM_SIZE    = 0x00020000
+
+	ASFLAGS += \
+		-mabi=ilp32e \
+		-march=rv32emc_zicsr_zifencei \
+
+	CFLAGS += \
+		-mabi=ilp32e \
+		-march=rv32emc_zicsr_zifencei \
+		-DNRF54L15_ENGA_XXAA \
+		-DNRF_FLPR \
+
+	ASMS_SOC_NRF5 = \
+
+	SRCS_SOC_NRF5 = \
+
+	SRCS_HAL_NRF5 = \
+		hal/nrf5/gpio.c \
+
+	ASMS_SOC = $(ASMS_SOC_NRF5)
+	SRCS_SOC = $(SRCS_SOC_NRF5)
+	SRCS_HAL = $(SRCS_HAL_NRF5)
+
+	INCLUDES += \
+		-I ext/nordic/include \
+		-I soc/nrf5 \
+
 else ifeq ($(SOC), nrf54l15_cpuapp)
 	ARCH = arm
 
 	FLASH_START = 0x00000000
 	FLASH_SIZE  = 0x00100000
 	RAM_START   = 0x20000000
-	RAM_SIZE    = 0x00080000
+	RAM_SIZE    = 0x00020000
 
 	ASFLAGS += \
 		-mcpu=cortex-m33 \
