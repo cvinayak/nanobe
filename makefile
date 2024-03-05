@@ -104,6 +104,14 @@ ifeq ($(SOC), fe310)
 	RAM_START   = 0x80000000
 	RAM_SIZE    = 0x00004000
 
+	ASFLAGS += \
+		-mabi=ilp32 \
+		-march=rv32imac_zicsr \
+
+	CFLAGS += \
+		-mabi=ilp32 \
+		-march=rv32imac_zicsr \
+
 	SRCS_HAL_FE310 = \
 		hal/fe310/gpio.c \
 
@@ -360,6 +368,9 @@ ifeq ($(ARCH), riscv)
 	arch/riscv/startup.s \
 
   ASMS_NANOBE = \
+
+  INCLUDES += \
+	-I . \
 
 else ifeq ($(ARCH), arm)
   ASMS_COMMON = \
