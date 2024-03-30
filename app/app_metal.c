@@ -18,7 +18,19 @@ int main(void)
 {
 	gpio_pin_out_config(LED_BLINK, LED_BLINK_ON);
 
-#if defined(NRF54L15_ENGA_XXAA) && defined(NRF_APPLICATION)
+#if defined(NRF54L15_ENGA_XXAA)
+	/* Shared memory queue with first and last index. APP sends value
+	 * to VPR core.
+	 */
+	volatile uint32_t *first = (uint32_t *)0x2003FFFC;
+	volatile uint32_t *last = (uint32_t *)0x2003FFF8;
+	uint32_t *queue = (uint32_t *)0x2003FFF0;
+
+#if defined(NRF_APPLICATION)
+	/* Initialize shared memory indices in APP core */
+	*first = 0U;
+	*last = 0U;
+
 	/* GPIO control select VPR */
 	NRF_P1_S->PIN_CNF[LED3-32] = (GPIO_PIN_CNF_CTRLSEL_VPR <<
 				      GPIO_PIN_CNF_CTRLSEL_Pos) &
@@ -40,7 +52,52 @@ int main(void)
 
 	/* Run VPR CPU */
 	NRF_VPR00_S->CPURUN = 1U;
-#endif
+
+	/* Enqueue value (toggle) in share memory */
+	uint32_t value = 0U;
+	while (1) {
+		if (*first == *last) {
+			uint32_t index;
+
+			index = *last;
+			queue[index] = value;
+
+			gpio_pin_out_config(LED_BLINK, (value & 0x01));
+
+			index++;
+			if (index == 2U) {
+				index = 0U;
+			}
+			*last = index;
+
+			value++;
+		}
+
+		/* Spin loop as delay between enqueue value (toggle) */
+		for (int i = 0U; i < 0x000FFFFF; i++);
+	}
+
+#else /* !NRF_APPLICATION */
+	/* Dequeue value (toggle) from shared memory */
+	while (1) {
+		if (*first != *last) {
+			uint32_t index;
+			uint32_t value;
+
+			index = *first;
+			value = queue[index];
+
+			gpio_pin_out_config(LED_BLINK, (value & 0x01));
+
+			index++;
+			if (index == 2U) {
+				index = 0U;
+			}
+			*first = index;
+		}
+	}
+#endif /* !NRF_APPLICATION */
+#endif /* NRF54L15_ENGA_XXAA */
 
 	return 0;
 }
