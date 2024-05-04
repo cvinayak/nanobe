@@ -10,6 +10,12 @@
 #define LED3      41 /* P1.09 */
 #define LED4      8  /* P0.08 */
 
-#define LED_BLINK (LED1)
+#define LED1_ON   0  /* On value */
+#define LED2_ON   0  /* On value */
+#define LED3_ON   0  /* On value */
+#define LED4_ON   0  /* On value */
+
+#define LED_BLINK    (LED1)
+#define LED_BLINK_ON 0 /* On value */
 
 #endif
