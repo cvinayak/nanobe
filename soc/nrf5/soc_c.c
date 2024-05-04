@@ -25,9 +25,8 @@ void soc_init(void)
 #if defined(NRF51_SERIES)
 	/* Power on peripherals */
 	*(uint32_t *)0x40000504 = 0xC002FFC7;
-#endif
 
-#if defined(NRF52_SERIES)
+#elif defined(NRF52_SERIES)
 	/* Disconnect all GPIOs */
 	do {
 		uint8_t i;
@@ -38,9 +37,54 @@ void soc_init(void)
 			NRF_GPIO->PIN_CNF[i] = 0x00000002;
 		}
 	} while (0);
-#endif
 
-#if defined(NRF5340_XXAA_APPLICATION)
+	/* Turn on Instruction Cache */
+	NRF_NVMC->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Enabled <<
+			       NVMC_ICACHECNF_CACHEEN_Pos) &
+			      NVMC_ICACHECNF_CACHEEN_Msk;
+
+#elif defined(NRF5340_XXAA_APPLICATION)
+	/* LFXO internal capacitors */
+	NRF_OSCILLATORS_S->XOSC32KI.INTCAP =
+		(OSCILLATORS_XOSC32KI_INTCAP_INTCAP_C7PF <<
+		 OSCILLATORS_XOSC32KI_INTCAP_INTCAP_Pos) &
+		OSCILLATORS_XOSC32KI_INTCAP_INTCAP_Msk;
+
+	/* XL1 GPIO Pins as peripheral control */
+	NRF_P0_S->PIN_CNF[0] =
+		(GPIO_PIN_CNF_MCUSEL_Peripheral <<
+		 GPIO_PIN_CNF_MCUSEL_Pos) &
+		GPIO_PIN_CNF_MCUSEL_Msk;
+	NRF_P0_S->PIN_CNF[1] =
+		(GPIO_PIN_CNF_MCUSEL_Peripheral <<
+		 GPIO_PIN_CNF_MCUSEL_Pos) &
+		GPIO_PIN_CNF_MCUSEL_Msk;
+
+	/* Trimming of the device. Copy all the trimming values from FICR into
+	 * the target addresses. Trim until one ADDR is not initialized.
+	 */
+	uint32_t index = 0ul;
+	for (index = 0ul;
+	     index < 64ul &&
+	     (uint32_t)NRF_FICR_S->TRIMCNF[index].ADDR != 0xFFFFFFFFul &&
+	     (uint32_t)NRF_FICR_S->TRIMCNF[index].ADDR != 0x00000000ul;
+	     index++) {
+		*((volatile uint32_t *)NRF_FICR_S->TRIMCNF[index].ADDR) =
+			NRF_FICR_S->TRIMCNF[index].DATA;
+	}
+
+	/* Load APPROTECT soft branch from UICR.
+	 * If UICR->APPROTECT is disabled, CTRLAP->APPROTECT will be
+	 * disabled.
+	 */
+	NRF_CTRLAP_S->APPROTECT.DISABLE = NRF_UICR_S->APPROTECT;
+
+	/* Load SECURE APPROTECT soft branch from UICR.
+	 * If UICR->SECUREAPPROTECT is disabled,
+	 * CTRLAP->SECUREAPPROTECT will be disabled.
+	 */
+	NRF_CTRLAP_S->SECUREAPPROTECT.DISABLE = NRF_UICR_S->SECUREAPPROTECT;
+
 #if defined(NRF5340_CPUNET_ON)
 #if defined(DEBUG) && (DEBUG)
 	NRF_P0_S->PIN_CNF[LED_BLINK_NET] = (GPIO_PIN_CNF_MCUSEL_NetworkMCU <<
@@ -93,10 +137,37 @@ void soc_init(void)
 			 GPIO_PIN_CNF_MCUSEL_Pos) &
 			GPIO_PIN_CNF_MCUSEL_Msk;
 	}
-#endif
+#endif /* DEBUG */
+
 	NRF_RESET_S->NETWORK.FORCEOFF = 0;
-#endif
-#endif
+
+#endif /* NRF5340_CPUNET_ON */
+
+#elif defined(NRF5340_XXAA_NETWORK)
+	/* Trimming of the device. Copy all the trimming values from FICR into
+	 * the target addresses. Trim until one ADDR is not initialized.
+	 */
+	uint32_t index = 0ul;
+	for (index = 0ul;
+	     index < 64ul &&
+	     (uint32_t)NRF_FICR_NS->TRIMCNF[index].ADDR != 0xFFFFFFFFul &&
+	     (uint32_t)NRF_FICR_NS->TRIMCNF[index].ADDR != 0x00000000ul;
+	     index++) {
+		*((volatile uint32_t *)NRF_FICR_NS->TRIMCNF[index].ADDR) =
+			NRF_FICR_NS->TRIMCNF[index].DATA;
+	}
+
+	/* Turn on Instruction Cache */
+	NRF_NVMC_NS->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Enabled <<
+			       NVMC_ICACHECNF_CACHEEN_Pos) &
+			      NVMC_ICACHECNF_CACHEEN_Msk;
+
+	/* Load APPROTECT soft branch from UICR.
+	 * If UICR->APPROTECT is disabled, CTRLAP->APPROTECT will be
+	 * disabled.
+	 */
+	NRF_CTRLAP_NS->APPROTECT.DISABLE = NRF_UICR_NS->APPROTECT;
+#endif /* NRF5340_XXAA_NETWORK */
 
 	/* SEVONPEND */
 	SCB->SCR |= SCB_SCR_SEVONPEND_Msk;
