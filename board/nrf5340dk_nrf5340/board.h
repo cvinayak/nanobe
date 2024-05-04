@@ -10,7 +10,13 @@
 #define LED3      30 /* P0.30 */
 #define LED4      31 /* P0.31 */
 
+#define LED1_ON   0  /* On value */
+#define LED2_ON   0  /* On value */
+#define LED3_ON   0  /* On value */
+#define LED4_ON   0  /* On value */
+
 #define LED_BLINK_NET (LED_RED)
+#define LED_BLINK_ON  0 /* On value */
 
 #define UART_PIN_TXD_NET 33
 #define UART_PIN_RXD_NET 32
