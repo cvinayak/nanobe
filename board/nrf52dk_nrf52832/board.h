@@ -10,7 +10,13 @@
 #define LED3      19 /* P0.19 */
 #define LED4      20 /* P0.20 */
 
-#define LED_BLINK (LED1)
+#define LED1_ON   0  /* On value */
+#define LED2_ON   0  /* On value */
+#define LED3_ON   0  /* On value */
+#define LED4_ON   0  /* On value */
+
+#define LED_BLINK    (LED1)
+#define LED_BLINK_ON 0 /* On value */
 
 #define UART_PIN_TXD 6
 #define UART_PIN_RXD 8
