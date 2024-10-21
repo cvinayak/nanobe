@@ -18,7 +18,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #define ASSERT(x) do { \
 			if (!(x)) { \
-				__asm__ volatile (".inst 0xde00\n"); \
+				__asm__ inline volatile (".inst 0xde00\n"); \
 			} \
 		} while (0)
 
