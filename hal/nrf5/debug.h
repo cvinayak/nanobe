@@ -35,6 +35,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				} else if ((x >= 32) && (x < 64)) { \
 					NRF_P1->DIRSET = (1 << (x - 32)); \
 					NRF_P1->OUTCLR = (1 << (x - 32)); \
+				} else if ((x >= 64) && (x < 96)) { \
+					NRF_P2->DIRSET = (1 << (x - 64)); \
+					NRF_P2->OUTCLR = (1 << (x - 64)); \
 				} \
 			  } while (0)
 #define DEBUG_PIN_SET(p)  do { \
@@ -44,6 +47,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					NRF_GPIO->OUTSET = (1 << x); \
 				} else if ((x >= 32) && (x < 64)) { \
 					NRF_P1->OUTSET = (1 << (x - 32)); \
+				} else if ((x >= 64) && (x < 96)) { \
+					NRF_P2->OUTSET = (1 << (x - 64)); \
 				} \
 			  } while (0)
 #define DEBUG_PIN_CLR(p)  do { \
@@ -53,6 +58,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 					NRF_GPIO->OUTCLR = (1 << x); \
 				} else if ((x >= 32) && (x < 64)) { \
 					NRF_P1->OUTCLR = (1 << (x - 32)); \
+				} else if ((x >= 64) && (x < 96)) { \
+					NRF_P2->OUTCLR = (1 << (x - 64)); \
 				} \
 			  } while (0)
 #define DEBUG_PIN_ON(p)   do { \
@@ -64,6 +71,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				} else if ((x >= 32) && (x < 64)) { \
 					NRF_P1->OUTCLR = (1 << (x - 32)); \
 					NRF_P1->OUTSET = (1 << (x - 32)); \
+				} else if ((x >= 64) && (x < 96)) { \
+					NRF_P2->OUTCLR = (1 << (x - 64)); \
+					NRF_P2->OUTSET = (1 << (x - 64)); \
 				} \
 			  } while (0)
 #define DEBUG_PIN_OFF(p)  do { \
@@ -75,6 +85,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				} else if ((x >= 32) && (x < 64)) { \
 					NRF_P1->OUTSET = (1 << (x - 32)); \
 					NRF_P1->OUTCLR = (1 << (x - 32)); \
+				} else if ((x >= 64) && (x < 96)) { \
+					NRF_P2->OUTSET = (1 << (x - 64)); \
+					NRF_P2->OUTCLR = (1 << (x - 64)); \
 				} \
 			  } while (0)
 #else
