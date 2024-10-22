@@ -1,13 +1,13 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
-#define LED_RED   4  /* P0.04 */
-#define LED_GREEN 40 /* P1.08 */
-#define LED_BLUE  45 /* P1.13 */
+#define LED_RED   73 /* P2.09 */
+#define LED_GREEN 42 /* P1.10 */
+#define LED_BLUE  71 /* P2.07 */
 
-#define LED1      4  /* P0.04 */
-#define LED2      40 /* P1.08 */
-#define LED3      45 /* P1.13 */
+#define LED1      73 /* P2.09 */
+#define LED2      42 /* P1.10 */
+#define LED3      71 /* P2.07 */
 #define LED4      46 /* P1.14 */
 
 #define LED1_ON   1  /* On value */
