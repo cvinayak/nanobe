@@ -45,7 +45,7 @@
 #endif /* !NRF_NETWORK */
 
 /* nRF54 Series IRQ mapping */
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 
 #define HAL_SWI_RADIO_IRQ  SWI02_IRQn
 

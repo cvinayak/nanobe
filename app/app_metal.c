@@ -18,7 +18,7 @@ int main(void)
 {
 	gpio_pin_out_config(LED_BLINK, LED_BLINK_ON);
 
-#if defined(NRF54L15_ENGA_XXAA)
+#if defined(NRF54L_SERIES)
 	/* Shared memory queue with first and last index. APP sends value
 	 * to VPR core.
 	 */
@@ -97,7 +97,7 @@ int main(void)
 		}
 	}
 #endif /* !NRF_APPLICATION */
-#endif /* NRF54L15_ENGA_XXAA */
+#endif /* NRF54L_SERIES */
 
 	return 0;
 }

@@ -142,7 +142,8 @@ else ifeq ($(SOC), nrf54l15_cpuvpr)
 	CFLAGS += \
 		-mabi=ilp32e \
 		-march=rv32emc_zicsr_zifencei \
-		-DNRF54L15_ENGA_XXAA \
+		-DNRF54L15_XXAA \
+		-DNRF54L_SERIES \
 		-DNRF_FLPR \
 
 	ASMS_SOC_NRF5 = \
@@ -176,7 +177,8 @@ else ifeq ($(SOC), nrf54l15_cpuapp)
 		-mcpu=cortex-m33 \
 		-mthumb \
 		-DNUM_IRQS=271 \
-		-DNRF54L15_ENGA_XXAA \
+		-DNRF54L15_XXAA \
+		-DNRF54L_SERIES \
 		-DNRF_APPLICATION \
 
 	ASMS_SOC_NRF5 = \

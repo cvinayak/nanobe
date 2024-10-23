@@ -169,7 +169,7 @@ void soc_init(void)
 	 */
 	NRF_CTRLAP_NS->APPROTECT.DISABLE = NRF_UICR_NS->APPROTECT;
 
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 	/* Set all GPIOs as output and pull down */
 	NRF_P0_S->DIRSET = UINT32_MAX;
 	NRF_P0_S->OUTCLR = UINT32_MAX;
@@ -347,7 +347,7 @@ void soc_init(void)
 
 	/* Running application at 128MHz clock frequency */
 	NRF_OSCILLATORS->PLL.FREQ = OSCILLATORS_PLL_FREQ_FREQ_CK128M;
-#endif /* NRF54L15_ENGA_XXAA */
+#endif /* NRF54L_SERIES */
 
 	/* SEVONPEND */
 	SCB->SCR |= SCB_SCR_SEVONPEND_Msk;
@@ -371,7 +371,7 @@ Assert handler
 #define ASSERT_STACK_FRAME (0x0101F000)
 #define NRF_NVMC NRF_NVMC_NS
 #define NRF_GPIO NRF_P0_NS
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 #define ASSERT_STACK_FRAME (0x0001F000)
 #define NRF_GPIO NRF_P0_S
 #endif
@@ -403,7 +403,7 @@ void exc_hardfault(uint32_t sp)
 	*p_flash = 0xFFFFFFFF;
 #endif
 
-#if !defined(NRF54L15_ENGA_XXAA)
+#if !defined(NRF54L_SERIES)
 	while (NRF_NVMC->READY == 0) {
 	}
 
@@ -421,7 +421,7 @@ void exc_hardfault(uint32_t sp)
 	}
 	NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
 
-#else /* NRF54L15_ENGA_XXAA */
+#else /* NRF54L_SERIES */
 	/* turn LEDs on */
 	NRF_GPIO->DIRSET = 0xFFFFFFFF;
 	NRF_GPIO->OUTSET = 0xFFFFFFFF;
@@ -449,7 +449,7 @@ void exc_hardfault(uint32_t sp)
 	NRF_RRAMC_S->CONFIG = (RRAMC_CONFIG_WEN_Disabled <<
 			       RRAMC_CONFIG_WEN_Pos) &&
 			      RRAMC_CONFIG_WEN_Msk;
-#endif /* NRF54L15_ENGA_XXAA */
+#endif /* NRF54L_SERIES */
 
 	/* low power hang! */
 	while(1)

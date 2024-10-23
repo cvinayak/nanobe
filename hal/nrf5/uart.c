@@ -64,7 +64,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define UARTX_INTENSET_TXDRDY_Msk          UARTE_INTENSET_TXDRDY_Msk
 #define UARTX_INTENSET_ERROR_Msk           UARTE_INTENSET_ERROR_Msk
 #define UART0_IRQn                         SERIAL0_IRQn
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 #if defined(UART1)
 #define NRF_UARTX                          NRF_UARTE20
 #define UARTX_IRQn                         SERIAL20_IRQn
@@ -112,7 +112,7 @@ uint32_t uart_init(uint8_t pin_txd, uint8_t pin_rxd,
 	NRF_UARTX->CONFIG =
 		((hwfc << UARTX_CONFIG_HWFC_Pos) &
 		 UARTX_CONFIG_HWFC_Msk) |
-#if defined(NRF54L15_ENGA_XXAA)
+#if defined(NRF54L_SERIES)
 		((UARTX_CONFIG_FRAMESIZE_8bit << UARTX_CONFIG_FRAMESIZE_Pos) &
 		 UARTX_CONFIG_FRAMESIZE_Msk) |
 #endif
@@ -147,7 +147,7 @@ uint32_t uart_init(uint8_t pin_txd, uint8_t pin_rxd,
 	NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
 	NRF_UARTX->TASKS_STARTRX = 1;
 
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 	NRF_UARTX->SHORTS = UARTE_SHORTS_DMA_TX_END_DMA_TX_STOP_Msk |
 			    UARTE_SHORTS_DMA_RX_END_DMA_RX_STOP_Msk;
 
@@ -192,7 +192,7 @@ void uart_tx(uint8_t x)
 		NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
 		NRF_UARTX->TASKS_STARTTX = 1;
 
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 		NRF_UARTX->DMA.TX.MAXCNT = 1;
 		NRF_UARTX->DMA.TX.PTR = (uint32_t)&tx[tx_first];
 		NRF_UARTX->TASKS_STARTTX = 1;
@@ -293,7 +293,7 @@ void isr_uart0(void *param)
 			NRF_UARTX->TXD.PTR = (uint32_t)&tx[tx_first];
 			NRF_UARTX->TASKS_STARTTX = 1;
 
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 			NRF_UARTX->DMA.TX.MAXCNT = 1;
 			NRF_UARTX->DMA.TX.PTR = (uint32_t)&tx[tx_first];
 			NRF_UARTX->TASKS_STARTTX = 1;
@@ -335,7 +335,7 @@ void isr_uart0(void *param)
 		NRF_UARTX->RXD.PTR = (uint32_t)&rx[rx_last];
 		NRF_UARTX->TASKS_STARTRX = 1;
 
-#elif defined(NRF54L15_ENGA_XXAA)
+#elif defined(NRF54L_SERIES)
 		rx_last = last;
 
 		NRF_UARTX->DMA.RX.MAXCNT = UART_RX_BUFFER_MAX;
@@ -348,7 +348,7 @@ void isr_uart0(void *param)
 #endif
 	}
 
-#if defined(NRF54L15_ENGA_XXAA)
+#if defined(NRF54L_SERIES)
 	if (NRF_UARTX->EVENTS_DMA.TX.END) {
 		NRF_UARTX->EVENTS_DMA.TX.END = 0;
 	}

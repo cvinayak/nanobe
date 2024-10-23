@@ -6,7 +6,9 @@
  */
 
 #ifndef NRF_RTC
-#if defined(NRF5340_XXAA_APPLICATION)
+#if defined(NRF54L_SERIES)
+#define NRF_RTC NRF_RTC10_S
+#elif defined(NRF5340_XXAA_APPLICATION)
 #define NRF_RTC NRF_RTC0_S
 #elif defined(NRF5340_XXAA_NETWORK)
 #define NRF_RTC NRF_RTC0_NS
