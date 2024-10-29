@@ -16,6 +16,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "soc.h"
 #include "board.h"
 #include "util/misc.h"
+#include "hal/cpu.h"
 
 /****************************************************************************
 System
@@ -453,7 +454,7 @@ void exc_hardfault(uint32_t sp)
 	/* low power hang! */
 	while(1)
 	{
-		__WFE();
+		cpu_sleep();
 	}
 }
 

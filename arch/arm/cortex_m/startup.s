@@ -101,8 +101,26 @@ no_bss:
 	blx r0
 
 sleep:
-	wfe
+	bl _cpu_sleep
 	b sleep
+
+	.section .text
+	.thumb_func
+	.global _cpu_sleep
+	.type _cpu_sleep, %function
+_cpu_sleep:
+	/* cpsid i */
+	.rept 0
+	nop
+	.endr
+	wfe
+	.rept 0
+	nop
+	.endr
+	sev
+	wfe
+	/* cpsie i */
+	bx lr
 
 	.section .text
 	.thumb_func

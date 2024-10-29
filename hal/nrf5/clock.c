@@ -16,6 +16,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "soc.h"
 #include "irq.h"
 
+#include "hal/cpu.h"
 #include "hal/clock.h"
 #include "hal/debug.h"
 
@@ -56,9 +57,7 @@ uint32_t clock_m16src_start(uint32_t blocking)
 
 		NRF_CLOCK->TASKS_HFCLKSTART = 1;
 		while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0) {
-			__WFE();
-			__SEV();
-			__WFE();
+			cpu_sleep();
 		}
 		NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
 
@@ -133,9 +132,7 @@ uint32_t clock_k32src_start(uint32_t src)
 	NRF_CLOCK->LFCLKSRC = src;
 	NRF_CLOCK->TASKS_LFCLKSTART = 1;
 	while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0) {
-		__WFE();
-		__SEV();
-		__WFE();
+		cpu_sleep();
 	}
 	NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
 

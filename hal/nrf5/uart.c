@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 #include "soc.h"
 
+#include "hal/cpu.h"
 #include "hal/uart.h"
 #include "hal/debug.h"
 
@@ -173,9 +174,7 @@ void uart_tx(uint8_t x)
 	}
 
 	while (last == tx_first) {
-		__WFE();
-		__SEV();
-		__WFE();
+		cpu_sleep();
 	}
 
 	tx[tx_last] = x;

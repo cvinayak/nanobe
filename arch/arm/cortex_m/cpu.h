@@ -18,9 +18,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 static inline void cpu_sleep(void)
 {
-	__WFE();
-	__SEV();
-	__WFE();
+	extern void _cpu_sleep(void);
+
+	_cpu_sleep();
 }
 
 static inline void cpu_dmb(void)
