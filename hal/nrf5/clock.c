@@ -70,6 +70,11 @@ uint32_t clock_m16src_start(uint32_t blocking)
 	} else {
 		NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
 		NRF_CLOCK->TASKS_HFCLKSTART = 1;
+
+#if defined(NRF54L_SERIES)
+		NRF_CLOCK->EVENTS_PLLSTARTED = 0;
+		NRF_CLOCK->TASKS_PLLSTART = 1;
+#endif /* NRF54L_SERIES */
 	}
 
 	/* release the guard */
@@ -106,7 +111,19 @@ uint32_t clock_m16src_stop(void)
 	++_m16src_grd;
 	irq_unlock(imask);
 
+	ASSERT(NRF_CLOCK->HFCLKSTAT & CLOCK_HFCLKSTAT_STATE_Msk);
+
 	NRF_CLOCK->TASKS_HFCLKSTOP = 1;
+
+#if defined(NRF54L_SERIES)
+	ASSERT(!(NRF_CLOCK->XO.STAT & CLOCK_XO_STAT_STATE_Msk));
+
+	ASSERT(NRF_CLOCK->PLL.STAT & CLOCK_PLL_STAT_STATE_Msk);
+
+	NRF_CLOCK->TASKS_PLLSTOP = 1;
+
+	ASSERT(!(NRF_CLOCK->PLL.STAT & CLOCK_PLL_STAT_STATE_Msk));
+#endif /* NRF54L_SERIES */
 
 	/* release the guard */
 	--_m16src_grd;
@@ -202,6 +219,12 @@ void isr_power_clock(void *param)
 	hf_stat = ((NRF_CLOCK->HFCLKSTAT & CLOCK_HFCLKSTAT_STATE_Msk) != 0);
 	hf = (NRF_CLOCK->EVENTS_HFCLKSTARTED != 0);
 
+#if defined(NRF54L_SERIES)
+	uint8_t pll;
+
+	pll = (NRF_CLOCK->EVENTS_PLLSTARTED != 0);
+#endif /* NRF54L_SERIES */
+
 	lf = (NRF_CLOCK->EVENTS_LFCLKSTARTED != 0);
 
 	done = (NRF_CLOCK->EVENTS_DONE != 0);
@@ -239,6 +262,12 @@ void isr_power_clock(void *param)
 		/* Start Calibration */
 		NRF_CLOCK->TASKS_CAL = 1;
 	}
+
+#if defined(NRF54L_SERIES)
+	if (pll) {
+		NRF_CLOCK->EVENTS_PLLSTARTED = 0;
+	}
+#endif /* NRF54L_SERIES */
 
 	if (lf) {
 		NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
