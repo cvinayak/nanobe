@@ -90,7 +90,7 @@ _nanobe_isr_inject:
 	 */
 	mrs r0, psp
 	ldr r3, [r0, #28]
-	ldr r2, =0xF000
+	ldr r2, =0x000FFC00
 	and r2, r3
 	bne __ici_skip
 	ldr r3, = _sgrd
@@ -125,7 +125,15 @@ _nanobe_isr_inject:
 .endif /* NANOBE_USE_STACK_STORE */
 
 __not_nanobe:
+	bx lr
+
 __ici_skip:
+	/* May be Pend SV and return, avoid recursive call */
+	/*
+	 * ldr r0, =0xE000ED04
+	 * ldr r1, =0x10000000
+	 * str r1, [r0]
+	 */
 	bx lr
 
 __ilocked:
