@@ -11,6 +11,7 @@ SECTIONS {
 
 	.text : {
 		KEEP(*(.text.entry))
+		*(.int_vector*)
 		*(.text*)
 	} > FLASH
 	__text_end = .;

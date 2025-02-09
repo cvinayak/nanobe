@@ -101,3 +101,33 @@ int main(void)
 
 	return 0;
 }
+
+void machine_exception(void)
+{
+	static volatile int i;
+
+	gpio_pin_out_config(LED4, LED4_ON);
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+
+	gpio_pin_out_config(LED2, LED2_ON);
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+
+	gpio_pin_out_config(LED2, (~LED2_ON & 0x1));
+}
+
+void machine_interrupt(void)
+{
+	static volatile int i;
+
+	gpio_pin_out_config(LED2, LED2_ON);
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+
+	gpio_pin_out_config(LED4, LED4_ON);
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+
+	gpio_pin_out_config(LED4, (~LED4_ON & 0x1));
+}
