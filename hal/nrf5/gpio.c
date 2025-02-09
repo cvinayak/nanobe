@@ -46,6 +46,16 @@ void gpio_pin_out(uint32_t pin, uint8_t level)
 			NRF_P1->OUTCLR = bitmask;
 		}
 #endif
+#if (GPIO_COUNT > 2)
+	} else if (pin < 96) {
+		uint32_t bitmask = BIT(pin - 64);
+
+		if (level) {
+			NRF_P2->OUTSET = bitmask;
+		} else {
+			NRF_P2->OUTCLR = bitmask;
+		}
+#endif
 	}
 }
 
@@ -67,6 +77,17 @@ void gpio_pin_out_config(uint32_t pin, uint8_t level)
 			NRF_P1->OUTCLR = bitmask;
 		}
 		NRF_P1->DIRSET = bitmask;
+#endif
+#if (GPIO_COUNT > 2)
+	} else if (pin < 96) {
+		uint32_t bitmask = BIT(pin - 64);
+
+		if (level) {
+			NRF_P2->OUTSET = bitmask;
+		} else {
+			NRF_P2->OUTCLR = bitmask;
+		}
+		NRF_P2->DIRSET = bitmask;
 #endif
 	}
 }
