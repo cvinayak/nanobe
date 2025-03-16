@@ -9,9 +9,21 @@ MEMORY {
 
 SECTIONS {
 
-	.text : {
+	.text.entry : {
 		KEEP(*(.text.entry))
-		*(.int_vector*)
+	} > FLASH
+
+	.isr_return ORIGIN(FLASH) + 0x01F0 : {
+		KEEP(*(.isr_return))
+	} > FLASH
+
+	. = ALIGN(4);
+	.int_vector : {
+		KEEP(*(.int_vector*))
+	} > FLASH
+
+	. = ALIGN(4);
+	.text : {
 		*(.text*)
 	} > FLASH
 	__text_end = .;
