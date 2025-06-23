@@ -78,6 +78,16 @@ int main(void)
 	}
 
 #else /* !NRF_APPLICATION */
+
+	NRF_VPRCLIC->CLIC.CLICINT[EGU10_IRQn] = 0x3FC30000;
+
+	NRF_EGU10->EVENTS_TRIGGERED[0] = 0U;
+	NRF_EGU10->INTENSET = BIT(0);
+
+	NRF_VPRCLIC->CLIC.CLICINT[EGU10_IRQn] = 0x3FC30100;
+
+	__asm__ volatile ("csrsi mstatus, 0x8");
+
 	/* Dequeue value (toggle) from shared memory */
 	while (1) {
 		if (*first != *last) {
@@ -94,6 +104,12 @@ int main(void)
 				index = 0U;
 			}
 			*first = index;
+
+			if ((value % 5) == 4U) {
+				NRF_EGU10->TASKS_TRIGGER[0] = 1U;
+			}
+
+			// __asm__ volatile ("ecall");
 		}
 	}
 #endif /* !NRF_APPLICATION */
@@ -131,3 +147,22 @@ void machine_interrupt(void)
 
 	gpio_pin_out_config(LED4, (~LED4_ON & 0x1));
 }
+
+#if defined(NRF54L_SERIES)
+#if !defined(NRF_APPLICATION)
+void EGU10_IRQHandler(void)
+{
+	static volatile int i;
+
+	NRF_EGU10->EVENTS_TRIGGERED[0] = 0U;
+
+	gpio_pin_out_config(LED2, LED2_ON);
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+
+	gpio_pin_out_config(LED2, (~LED2_ON & 0x1));
+	for (i = 0U; i < 0xFFFFF; i++) {
+	}
+}
+#endif /* !NRF_APPLICATION */
+#endif /* NRF54L_SERIES */
