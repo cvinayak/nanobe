@@ -413,6 +413,7 @@ ifeq ($(ARCH), riscv)
 	arch/riscv/startup.s \
 
   ASMS_NANOBE = \
+	arch/riscv/nanobe.s \
 
   INCLUDES += \
 	-I . \
