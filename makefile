@@ -8,11 +8,19 @@ ifeq ($(BOARD), HiFive1)
 
 	CFLAGS = \
 
+	ASFLAGS = \
+		-mabi=ilp32 \
+		-march=rv32imac
+
+	CFLAGS = \
+		-mabi=ilp32 \
+		-march=rv32imac \
+
 	INCLUDES = \
 		-I board/HiFive1 \
 
-else ifeq ($(BOARD), nrf54l15dk_nrf54l15_cpuvpr)
-	SOC = nrf54l15_cpuvpr
+else ifeq ($(BOARD), nrf54l15dk_nrf54l15_cpuflpr)
+	SOC = nrf54l15_cpuflpr
 
 	ASFLAGS = \
 
@@ -127,7 +135,7 @@ ifeq ($(SOC), fe310)
 
 	SRCS_HAL = $(SRCS_HAL_FE310)
 
-else ifeq ($(SOC), nrf54l15_cpuvpr)
+else ifeq ($(SOC), nrf54l15_cpuflpr)
 	ARCH = riscv
 
 	FLASH_START = 0x00100000
@@ -142,6 +150,7 @@ else ifeq ($(SOC), nrf54l15_cpuvpr)
 	CFLAGS += \
 		-mabi=ilp32e \
 		-march=rv32emc_zicsr_zifencei \
+		-DNUM_IRQS=271 \
 		-DNRF54L15_XXAA \
 		-DNRF54L_SERIES \
 		-DNRF_FLPR \
@@ -152,6 +161,8 @@ else ifeq ($(SOC), nrf54l15_cpuvpr)
 
 	SRCS_HAL_NRF5 = \
 		hal/nrf5/gpio.c \
+		hal/nrf5/timer.c \
+		hal/nrf5/uart.c \
 
 	ASMS_SOC = $(ASMS_SOC_NRF5)
 	SRCS_SOC = $(SRCS_SOC_NRF5)
@@ -416,6 +427,7 @@ ifeq ($(ARCH), riscv)
 	arch/riscv/nanobe.s \
 
   INCLUDES += \
+	-I arch/riscv \
 	-I . \
 
 else ifeq ($(ARCH), arm)
@@ -437,6 +449,9 @@ endif
 SRCS_NANOBE = \
 	nanobe/isr_table.c \
 	nanobe/nanobe_sched.c \
+
+INCLUDES += \
+	-I nanobe \
 
 SRCS_UTIL = \
 	util/util.c \
@@ -460,27 +475,27 @@ ASMS += $(ASMS_APP_METAL)
 SRCS += $(SRCS_APP_METAL)
 TARGETS += app/app_metal.elf
 
-ifeq ($(ARCH), arm)
-  ASMS_APP_PROFILE = \
+ASMS_APP_PROFILE = \
 	$(ASMS_COMMON) \
 	$(ASMS_NANOBE) \
 	$(ASMS_SOC_NRF5) \
 
-  SRCS_APP_PROFILE = \
+SRCS_APP_PROFILE = \
 	$(SRCS_NANOBE) \
 	$(SRCS_SOC_NRF5) \
 	$(SRCS_HAL_NRF5) \
 	$(SRCS_UTIL) \
 	app/app_profile.c \
 
-  INCLUDES += \
-	-I nanobe \
+CFLAGS_APP_PROFILE = \
+	-DDEBUG=1 \
 
-  OBJS_APP_PROFILE = $(ASMS_APP_PROFILE:.s=.o) $(SRCS_APP_PROFILE:.c=.o)
-  ASMS += $(ASMS_APP_PROFILE)
-  SRCS += $(SRCS_APP_PROFILE)
-  TARGETS += app/app_profile.elf
+OBJS_APP_PROFILE = $(ASMS_APP_PROFILE:.s=.o) $(SRCS_APP_PROFILE:.c=.o)
+ASMS += $(ASMS_APP_PROFILE)
+SRCS += $(SRCS_APP_PROFILE)
+TARGETS += app/app_profile.elf
 
+ifeq ($(ARCH), arm)
   ASMS_APP_MAYFLY = \
 	$(ASMS_COMMON) \
 	$(ASMS_NANOBE) \
@@ -528,7 +543,11 @@ all : CFLAGS += $(CFLAGS_APP_TICKER)
 
 app/app_metal.elf : $(OBJS_APP_METAL)
 
+
+app/app_profile.elf : CFLAGS += $(CFLAGS_APP_PROFILE)
+
 app/app_profile.elf : $(OBJS_APP_PROFILE)
+
 
 app/app_mayfly.elf : $(OBJS_APP_MAYFLY)
 

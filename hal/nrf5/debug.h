@@ -16,11 +16,15 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
+#if defined(__ARM_ARCH)
 #define ASSERT(x) do { \
 			if (!(x)) { \
 				__asm__ inline volatile (".inst 0xde00\n"); \
 			} \
 		} while (0)
+#else
+#define ASSERT(x)
+#endif
 
 #if defined(DEBUG) && DEBUG
 
